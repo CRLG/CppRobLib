@@ -20,8 +20,8 @@
 #define AX_REG_CCW_ANGLE_LIMIT_H        9
 #define AX_REG_SYSTEM_DATA2             10
 #define AX_REG_LIMIT_TEMPERATURE        11
-#define AX_REG_DOWN_LIMIT_VOLTAGE       12
-#define AX_REG_UP_LIMIT_VOLTAGE         13
+#define AX_REG_LOW_LIMIT_VOLTAGE        12
+#define AX_REG_HIGH_LIMIT_VOLTAGE       13
 #define AX_REG_MAX_TORQUE_L             14
 #define AX_REG_MAX_TORQUE               AX_REG_MAX_TORQUE_L
 #define AX_REG_MAX_TORQUE_H             15
