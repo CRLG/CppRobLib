@@ -129,7 +129,7 @@ typedef enum {
 //
 // ====================================================
 #define AX_BROADCAST_ID 0xFE
-
+#define AX_RETRY_ON_ERROR 3
 
 // ====================================================
 //          ABSTRACT CLASS FOR AX SERVOMOTORS
@@ -181,6 +181,8 @@ private:
     bool isPacketValid(unsigned char *packet);
 
     tAxErr _write(unsigned char *buff_data, unsigned char size);
+    tAxErr _read8bitsRegister(unsigned char id, unsigned char reg_addr, unsigned char *value, unsigned char *err_status=nullptr);
+    tAxErr _read16bitsRegister(unsigned char id, unsigned char reg_addr, unsigned short *value, unsigned char *err_status=nullptr);
 
     //! Communication is half-duplex so the same packet buffer can be used for both transmit or receive communication without conflict
     unsigned char m_packet[32];

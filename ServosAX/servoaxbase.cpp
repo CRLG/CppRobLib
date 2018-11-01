@@ -145,7 +145,7 @@ tAxErr ServoAXBase::write16bitsRegister(unsigned char id, unsigned char reg_addr
  * \param value : the return value read in the register
  * \return error code
  */
-tAxErr ServoAXBase::read8bitsRegister(unsigned char id, unsigned char reg_addr, unsigned char *value, unsigned char *err_status)
+tAxErr ServoAXBase::_read8bitsRegister(unsigned char id, unsigned char reg_addr, unsigned char *value, unsigned char *err_status)
 {
     tAxErr err;
 
@@ -164,6 +164,26 @@ tAxErr ServoAXBase::read8bitsRegister(unsigned char id, unsigned char reg_addr, 
 }
 
 // ____________________________________________________________
+/*! \brief Read the value in a 8 bits register with retry if error.
+ *
+ * \param id : the identifer of the servo
+ * \param reg_addr : the start address of the register
+ * \param value : the return value read in the register
+ * \return error code
+ */
+tAxErr ServoAXBase::read8bitsRegister(unsigned char id, unsigned char reg_addr, unsigned char *value, unsigned char *err_status)
+{
+    tAxErr err;
+    unsigned char try_count=0;
+    while(1)
+    {
+        err = _read8bitsRegister(id, reg_addr, value, err_status);
+        if (err == AX_OK) return AX_OK;
+        if (try_count++ >= AX_RETRY_ON_ERROR) return err;
+    }
+}
+
+// ____________________________________________________________
 /*! \brief Read the value in a 16 bits register.
  *
  * \param id : the identifer of the servo
@@ -171,7 +191,7 @@ tAxErr ServoAXBase::read8bitsRegister(unsigned char id, unsigned char reg_addr, 
  * \param value : the return value read in the register
  * \return error code
  */
-tAxErr ServoAXBase::read16bitsRegister(unsigned char id, unsigned char reg_addr, unsigned short *value, unsigned char *err_status)
+tAxErr ServoAXBase::_read16bitsRegister(unsigned char id, unsigned char reg_addr, unsigned short *value, unsigned char *err_status)
 {
     tAxErr err;
 
@@ -189,6 +209,25 @@ tAxErr ServoAXBase::read16bitsRegister(unsigned char id, unsigned char reg_addr,
     return AX_OK;
 }
 
+// ____________________________________________________________
+/*! \brief Read the value in a 16 bits register with retry if error.
+ *
+ * \param id : the identifer of the servo
+ * \param reg_addr : the start address of the register
+ * \param value : the return value read in the register
+ * \return error code
+ */
+tAxErr ServoAXBase::read16bitsRegister(unsigned char id, unsigned char reg_addr, unsigned short *value, unsigned char *err_status)
+{
+    tAxErr err;
+    unsigned char try_count=0;
+    while(1)
+    {
+        err = _read16bitsRegister(id, reg_addr, value, err_status);
+        if (err == AX_OK) return AX_OK;
+        if (try_count++ >= AX_RETRY_ON_ERROR) return err;
+    }
+}
 // ____________________________________________________________
 /*! \brief Write a value in a 8 bits register.
  *
