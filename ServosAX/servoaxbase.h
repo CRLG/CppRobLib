@@ -161,6 +161,7 @@ public:
     virtual tAxErr setMode(unsigned char id, unsigned char mode);
     virtual tAxErr setLimitPositionMin(unsigned char id, unsigned short pos);
     virtual tAxErr setLimitPositionMax(unsigned char id, unsigned short pos);
+    virtual tAxErr setLed(unsigned char id, bool state);
 
     // Medium level API
     tAxErr read8bitsRegister(unsigned char id, unsigned char reg_addr, unsigned char *value, unsigned char *err_status=nullptr);

@@ -121,6 +121,18 @@ tAxErr ServoAXBase::setMode(unsigned char id, unsigned char mode)
 }
 
 // ____________________________________________________________
+/*! \brief Switch on/Off the LED.
+ *
+ * \param id : the identifer of the servo
+ * \param state : the state of the led
+ * \return error code
+ */
+tAxErr ServoAXBase::setLed(unsigned char id, bool state)
+{
+    return write8bitsRegister(id, AX_REG_LED, state);
+}
+
+// ____________________________________________________________
 /*! \brief Write a value in a 16 bits register.
  *
  * \param id : the identifer of the servo
