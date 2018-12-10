@@ -12,7 +12,13 @@ public:
     virtual void decode(const unsigned char *buff_data);
     virtual void encode(unsigned char *buff_data);
 
-    short ExperienceStatus;   // seconds
+    typedef enum {
+        EXPER_WAITING_FOR_START = 0,
+        EXPERIENCE_IN_PROGRESS,
+        EXPERIENCE_FINISHED,
+        EXPERIENCE_ERROR = -1
+    }ExperienceStatusEnum;
+    short ExperienceStatus;
 };
 
 #endif // _MESSAGES_EXPERIENCE_STATUS
