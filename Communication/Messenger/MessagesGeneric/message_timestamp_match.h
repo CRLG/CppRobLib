@@ -8,7 +8,7 @@ class Message_TIMESTAMP_MATCH : public MessageBase
 public:
 
 #define MATCH_WAITING_FOR_START (-1)
-#define MATCH_END 9999
+#define MATCH_END (9999)
 
     Message_TIMESTAMP_MATCH();
 

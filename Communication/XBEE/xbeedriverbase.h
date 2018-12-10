@@ -28,8 +28,8 @@ typedef struct {
 // ====================================================
 #define XBEE_MAX_DATA_LEN    32
 typedef struct {
-    unsigned short SourceID;      //! TODO : peut être qu'on en a pas besoin �  ce niveau l�  ?? A supprimer sinon
-    unsigned short DestinationID;   //! TODO : peut être qu'on en a pas besoin �  ce niveau l�  ?? A supprimer sinon
+    unsigned short SourceID;      //! TODO : peut Ãªtre qu'on en a pas besoin Ã  ce niveau lÃ  ?? A supprimer sinon
+    unsigned short DestinationID;   //! TODO : peut Ãªtre qu'on en a pas besoin Ã  ce niveau lÃ  ?? A supprimer sinon
     unsigned char DLC; // Data Lenght
     unsigned char Data[XBEE_MAX_DATA_LEN];
 }tXbeeMessage;

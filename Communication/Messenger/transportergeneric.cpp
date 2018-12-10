@@ -47,7 +47,7 @@ void TransporterGeneric::decode(unsigned char newData, unsigned short source_add
     {
         // ----------------------------------------- ETATS PRIMAIRE D'AIGUILLAGE DU TYPE D'INFO RECUES
         case DECODER_STATE_INIT :
-            // Initialise les champs d'une précédente réception
+            // Initialise les champs d'une prÃ©cÃ©dente rÃ©ception
             _initDecoder();
 
             // Le message est une trame
@@ -74,17 +74,17 @@ void TransporterGeneric::decode(unsigned char newData, unsigned short source_add
             else if (newData > 0) {
                 m_decoder_state = DECODER_STATE_DATA_i;
             }
-            else { // Aucune donnée
+            else { // Aucune donnÃ©e
                 if (m_transfert_with_checksum)  { m_decoder_state = DECODER_STATE_CHECKSUM; }
                 else                            { readyFrame(&m_current_frame);  m_decoder_state = DECODER_STATE_INIT; }
             }
         break;
-        // ----------------------------------------- Les DLC données
+        // ----------------------------------------- Les DLC donnÃ©es
         case DECODER_STATE_DATA_i :
             m_current_frame.Data[m_data_number] = newData;
             m_data_number++;
             if (m_current_frame.DLC > m_data_number)
-            {  /* ne rien faire : il reste des données à recevoir */ }
+            {  /* ne rien faire : il reste des donnÃ©es Ã  recevoir */ }
             else {
                 if (m_transfert_with_checksum)  { m_decoder_state = DECODER_STATE_CHECKSUM; }
                 else                            { readyFrame(&m_current_frame);  m_decoder_state = DECODER_STATE_INIT;}

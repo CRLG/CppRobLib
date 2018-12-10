@@ -76,7 +76,7 @@ void XbeeDriverBase::encode(unsigned char *buff_data, unsigned short buff_size, 
   */
   //! TODO Dans le cas d'une √©mission, le champ ProducerID n'a pas d'utilit√© puisque l'ID du producteur, c'est "m_id"
     //! En revanche, il faut peut certainement encapsuler "dest_address" quelquepart dans le message comme l'attend le XBEE
-    write(buff_data, buff_size);   // renvoie directement le buffer d'entrÈe, c'est juste essayer
+    write(buff_data, buff_size);   // renvoie directement le buffer d'entr√©e, c'est juste essayer
 }
 
 
@@ -97,7 +97,7 @@ void XbeeDriverBase::decode(unsigned char newData)
     }
 */
     //! Le bout de code ici, c'est juste pour les essais
-    //! A supprimer une fois la machine d'Ètat de reconstitution crÈÈe
+    //! A supprimer une fois la machine d'√©tat de reconstitution cr√©√©e
     if (m_xmessage_index == 10) {  // 10 pour le test
         m_current_xmessage.SourceID = 0x4;
         unsigned int i=0;
