@@ -1,7 +1,7 @@
 #include "transportergeneric.h"
 #include "databasebase.h"
 #include "messengereventbase.h"
-#include "comdriverbase.h"
+#include "messengerinterfacebase.h"
 
 TransporterGeneric::TransporterGeneric() :
       m_decoder_state(DECODER_STATE_INIT),
@@ -126,7 +126,7 @@ void TransporterGeneric::encode(tMessengerFrame *frame)
         data[i++] = _getChecksum(frame);
     }
 
-    if (m_com_driver) m_com_driver->encode(data, i, frame->DestinationAddress);
+    if (m_messenger_interface) m_messenger_interface->encode(data, i, frame->DestinationAddress);
     if (m_event_mgr) m_event_mgr->frameTransmited(frame);
 }
 

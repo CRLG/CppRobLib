@@ -2,10 +2,11 @@
 #include "databasebase.h"
 #include "transporterbase.h"
 #include "messengereventbase.h"
+#include "messengerinterfacebase.h"
 
 TransporterBase::TransporterBase()
     : m_database(NULL),
-      m_com_driver(NULL),
+      m_messenger_interface(NULL),
       m_event_mgr(NULL)
 {
 }
@@ -15,9 +16,9 @@ TransporterBase::~TransporterBase()
 }
 
 // ____________________________________________________________
-void TransporterBase::setComDriver(ComDriverBase* driver)
+void TransporterBase::setMessengerInterface(MessengerInterfaceBase *messenger_interface )
 {
-    m_com_driver = driver;
+    m_messenger_interface = messenger_interface;
 }
 
 // ____________________________________________________________
