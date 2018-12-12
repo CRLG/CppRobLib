@@ -1,30 +1,46 @@
-#include "xbeedriverbase.h"
-#include "transporterbase.h"
+#include <stdio.h>
+#include "xbeedriver.h"
+#include "xbeedriverinterfacebase.h"
 
-XbeeDriverBase::XbeeDriverBase()
-    : m_xmessage_index(0)
+
+XbeeDriver::XbeeDriver()
+    : m_xmessage_index(0),
+      m_xbee_drv_interface(NULL),
+      m_id(0)
 {
 }
 
-XbeeDriverBase::~XbeeDriverBase()
+XbeeDriver::~XbeeDriver()
 {
 }
 
 // ____________________________________________________________
-unsigned short XbeeDriverBase::getID()
+void XbeeDriver::setXbeeInterface(XbeeDriverInterfaceBase *xbee_interface)
+{
+    m_xbee_drv_interface = xbee_interface;
+}
+
+// ____________________________________________________________
+unsigned short XbeeDriver::getID()
 {
     return m_id;
 }
 
 // ____________________________________________________________
-bool XbeeDriverBase::isPresent(unsigned char id)
+void XbeeDriver::setID(unsigned short id)
+{
+    m_id = id;
+}
+
+// ____________________________________________________________
+bool XbeeDriver::isPresent(unsigned char id)
 {
     bool dummy = true;
     return (dummy);
 }
 
 // ____________________________________________________________
-tXbeeErr XbeeDriverBase::init(const tXbeeSettings& settings)
+tXbeeErr XbeeDriver::init(const tXbeeSettings& settings)
 {
     tXbeeErr dummy=XBEE_OK;
 
@@ -36,21 +52,21 @@ tXbeeErr XbeeDriverBase::init(const tXbeeSettings& settings)
 }
 
 // ____________________________________________________________
-tXbeeErr XbeeDriverBase::connect()
+tXbeeErr XbeeDriver::connect()
 {
     tXbeeErr dummy=XBEE_OK;
     return dummy;
 }
 
 // ____________________________________________________________
-bool XbeeDriverBase::isConnected()
+bool XbeeDriver::isConnected()
 {
     bool dummy = true;
     return (dummy);
 }
 
 // ____________________________________________________________
-tXbeeErr XbeeDriverBase::reset()
+tXbeeErr XbeeDriver::reset()
 {
     tXbeeErr dummy=XBEE_OK;
     return dummy;
@@ -63,12 +79,13 @@ tXbeeErr XbeeDriverBase::reset()
  * \param buff_size: buffer size.
  * \param dest_address: Xbee destination ID.
  */
-void XbeeDriverBase::encode(unsigned char *buff_data, unsigned short buff_size, unsigned short dest_address)
+void XbeeDriver::encode(unsigned char *buff_data, unsigned short buff_size, unsigned short dest_address)
 {
 /*
     unsigned char xbuff_size = buff_size + 5;   // "5", c'est au pif, juste pour essayer
     unsigned char xbuff[xbuff_size];
     xbuff[0] = dest_address;  (ou ailleur...)
+    xbuff[1] = m_id; (ou ailleur ...)
     ...
     xbuff[n] = getChecksum(xbuff);
 
@@ -76,9 +93,23 @@ void XbeeDriverBase::encode(unsigned char *buff_data, unsigned short buff_size, 
   */
   //! TODO Dans le cas d'une émission, le champ ProducerID n'a pas d'utilité puisque l'ID du producteur, c'est "m_id"
     //! En revanche, il faut peut certainement encapsuler "dest_address" quelquepart dans le message comme l'attend le XBEE
-    write(buff_data, buff_size);   // renvoie directement le buffer d'entrée, c'est juste essayer
+    if (m_xbee_drv_interface) m_xbee_drv_interface->write(buff_data, buff_size);   // renvoie directement le buffer d'entrée, c'est juste pour essayer
 }
 
+
+// ____________________________________________________________
+/*! \brief Called each time a packet of data is received from Xbee.
+ *
+ * \param buff_data: the buffer of bytes received.
+ * \param buff_size: buffer size
+  */
+void XbeeDriver::decode(unsigned char *buff_data, unsigned char buff_size)
+{
+    for (int i=0; i<buff_size; i++)
+    {
+        decode(buff_data[i]);
+    }
+}
 
 // ____________________________________________________________
 /*! \brief Called each time a byte is received from Xbee.
@@ -86,7 +117,7 @@ void XbeeDriverBase::encode(unsigned char *buff_data, unsigned short buff_size, 
  * \param newData: the byte received.
  * \remarks : build a XMessage step by step
   */
-void XbeeDriverBase::decode(unsigned char newData)
+void XbeeDriver::decode(unsigned char newData)
 {
     //! TODO : reconstituer le message XBEE
     m_xmessage_index++;
@@ -116,8 +147,7 @@ void XbeeDriverBase::decode(unsigned char newData)
         if (isXMessageValid(&m_current_xmessage)) {
             unsigned char first_index_app_data = 0;  // index in the buffer of the synchro data
             unsigned char app_data_size= i;
-            if (m_transporter) m_transporter->decode(&m_current_xmessage.Data[first_index_app_data], app_data_size, m_current_xmessage.SourceID);
-            //newMessage(m_current_xmessage);
+            if (m_xbee_drv_interface) m_xbee_drv_interface->readyBytes(&m_current_xmessage.Data[first_index_app_data], app_data_size, m_current_xmessage.SourceID);
         }
         m_xmessage_index = 0;
     };
@@ -131,7 +161,7 @@ void XbeeDriverBase::decode(unsigned char newData)
  * \return the checksum
  * \remarks :
   */
-unsigned char XbeeDriverBase::getChecksum(unsigned char *packet)
+unsigned char XbeeDriver::getChecksum(unsigned char *packet)
 {
     unsigned char sum=0;
 //! TODO implement the correct checksum algorithm
@@ -153,7 +183,7 @@ unsigned char XbeeDriverBase::getChecksum(unsigned char *packet)
  * \return the checksum
  */
 //!
-bool XbeeDriverBase::isXMessageValid(tXbeeMessage *msg)
+bool XbeeDriver::isXMessageValid(tXbeeMessage *msg)
 {
    return true;
 }
