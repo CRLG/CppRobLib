@@ -2,8 +2,9 @@
 #include "xbeedriverbase.h"
 
 XbeeDriverBase::XbeeDriverBase()
-    : m_xmessage_index(0),
-      m_id(0)
+    : m_id(0),
+      m_xmessage_index(0)
+
 {
 }
 
