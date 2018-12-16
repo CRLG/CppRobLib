@@ -2,7 +2,7 @@
 #include "string.h"
 #include "message_timestamp_match.h"
 #include "databasebase.h"
-#include "messengereventbase.h"
+#include "messengerinterfacebase.h"
 
 // ==============================================================
 // ==============================================================
@@ -33,13 +33,13 @@ void Message_TIMESTAMP_MATCH::decode(const unsigned char *buff_data)
     Timestamp= ((short)buff_data[0] << 8) + buff_data[1];
 
 #ifdef MESSENGER_FULL
-    if (m_event_mgr) {
+    if (m_messenger_interface) {
         char name[16];
         char val_str[10];
         strcpy(name, "Timestamp");
         sprintf(val_str, "%d", Timestamp);
-        m_event_mgr->dataUpdated(name, val_str);
-        if (Timestamp != old_Timestamp) m_event_mgr->dataChanged(name, val_str);
+        m_messenger_interface->dataUpdated(name, val_str);
+        if (Timestamp != old_Timestamp) m_messenger_interface->dataChanged(name, val_str);
     }
 #endif // MESSENGER_FULL
 }

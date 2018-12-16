@@ -5,7 +5,7 @@
 
 class MessageBase;
 class TransporterBase;
-class MessengerEventBase;
+class MessengerInterfaceBase;
 
 // ====================================================
 //        BASE CLASS FOR MESSAGE
@@ -23,13 +23,13 @@ public:
     virtual unsigned short getMessageCount() = 0;  // child provide the number of message in the database
 
     void setTransporter(TransporterBase *messenger);
-    void setEventManager(MessengerEventBase* event_mgr);
+    void setMessengerInterface(MessengerInterfaceBase* messenger_interface);
 
 protected :
     MessageBase **m_p_messages_list;   // pointer table (table is allocated by child)
 
     TransporterBase *m_transporter;
-    MessengerEventBase *m_event_mgr;
+    MessengerInterfaceBase *m_messenger_interface;
 
     void initMessages();
 };

@@ -5,7 +5,6 @@
 
 class DatabaseBase;
 class MessengerInterfaceBase;
-class MessengerEventBase;
 
 // ====================================================
 //        ABSTRACT DRIVER CLASS FOR XBEE
@@ -24,14 +23,12 @@ public:
 
     void setDatabase(DatabaseBase* database);
     void setMessengerInterface(MessengerInterfaceBase* mesenger_interface);
-    void setEventManager(MessengerEventBase* event_mgr);
 
 protected :
     tMessengerFrame m_current_frame;
 
     DatabaseBase *m_database;
     MessengerInterfaceBase *m_messenger_interface;
-    MessengerEventBase *m_event_mgr;
 
     void readyFrame(tMessengerFrame* frame);
 };

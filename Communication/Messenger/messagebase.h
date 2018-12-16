@@ -9,7 +9,7 @@ typedef enum {
 }tMessageDirection;
 
 class DatabaseBase;
-class MessengerEventBase;
+class MessengerInterfaceBase;
 
 // ====================================================
 //        BASE CLASS FOR MESSAGES
@@ -26,7 +26,7 @@ public:
     virtual void send();
 
     void setDatabase(DatabaseBase *database);
-    void setEventManager(MessengerEventBase* event_mgr);
+    void setMessengerInterface(MessengerInterfaceBase* messenger_interface);
     void setDirection(tMessageDirection direction);
     void setDestinationAddress(unsigned short address);
     void setSourceAddress(unsigned short address);
@@ -45,7 +45,7 @@ protected :
     unsigned short m_source_address;
 
     DatabaseBase *m_database;
-    MessengerEventBase *m_event_mgr;
+    MessengerInterfaceBase *m_messenger_interface;
 };
 
 #endif // _MESSAGE_BASE_H

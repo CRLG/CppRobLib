@@ -1,6 +1,5 @@
 #include "transportergeneric.h"
 #include "databasebase.h"
-#include "messengereventbase.h"
 #include "messengerinterfacebase.h"
 
 TransporterGeneric::TransporterGeneric() :
@@ -127,7 +126,7 @@ void TransporterGeneric::encode(tMessengerFrame *frame)
     }
 
     if (m_messenger_interface) m_messenger_interface->encode(data, i, frame->DestinationAddress);
-    if (m_event_mgr) m_event_mgr->frameTransmited(frame);
+    if (m_messenger_interface) m_messenger_interface->frameTransmited(frame);
 }
 
 

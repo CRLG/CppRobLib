@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "messagebase.h"
 #include "databasebase.h"
-#include "messengereventbase.h"
+#include "messengerinterfacebase.h"
 
 MessageBase::MessageBase() :
     m_id(0),
@@ -10,7 +10,7 @@ MessageBase::MessageBase() :
     m_destination_address(0),
     m_source_address(0),
     m_database(NULL),
-    m_event_mgr(NULL)
+    m_messenger_interface(NULL)
 {
 }
 
@@ -59,13 +59,13 @@ void MessageBase::setDatabase(DatabaseBase *database)
 }
 
 // ____________________________________________________________
-/*! \brief Set the event manager.
+/*! \brief Set the messenger interface.
  *
- * \param event_mgr : the event manager
+ * \param messenger_interface : the messenger interface
  */
-void MessageBase::setEventManager(MessengerEventBase *event_mgr)
+void MessageBase::setMessengerInterface(MessengerInterfaceBase* messenger_interface)
 {
-    m_event_mgr = event_mgr;
+    m_messenger_interface = messenger_interface;
 }
 
 // ____________________________________________________________

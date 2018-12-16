@@ -2,7 +2,7 @@
 #include "databasebase.h"
 #include "messagebase.h"
 #include "transporterbase.h"
-#include "messengereventbase.h"
+#include "messengerinterfacebase.h"
 
 DatabaseBase::DatabaseBase() :
     m_p_messages_list(NULL),
@@ -26,16 +26,16 @@ void DatabaseBase::setTransporter(TransporterBase *transporter)
 }
 
 // ____________________________________________________________
-/*! \brief Set the event manager.
+/*! \brief Set the mesenger interface.
  *
- * \param event_mgr : the event manager
+ * \param messenger_interface : the interface
  */
-void DatabaseBase::setEventManager(MessengerEventBase *event_mgr)
+void DatabaseBase::setMessengerInterface(MessengerInterfaceBase *messenger_interface)
 {
-    m_event_mgr = event_mgr;
+    m_messenger_interface = messenger_interface;
     for (int i=0; i<getMessageCount(); i++) {
         if (m_p_messages_list[i]) {
-            m_p_messages_list[i]->setEventManager(event_mgr);
+            m_p_messages_list[i]->setMessengerInterface(messenger_interface);
         }
     }
 }
@@ -68,7 +68,7 @@ void DatabaseBase::decode(const tMessengerFrame* frame)
             if ( (msg->getID() == frame->ID) && (msg->getDirection() & MSG_RX) ){
                 msg->decode(frame->Data);
                 msg->setSourceAddress(frame->SourceAddress);
-                if (m_event_mgr) m_event_mgr->newMessageReceived(msg);
+                if (m_messenger_interface) m_messenger_interface->newMessageReceived(msg);
             }
         }
     }
@@ -87,5 +87,5 @@ void DatabaseBase::encode(MessageBase* msg)
     frame.DestinationAddress = msg->getDestinationAddress();
     msg->encode(frame.Data);
     if (m_transporter) m_transporter->encode(&frame);
-    if (m_event_mgr) m_event_mgr->messageTransmited(msg);
+    if (m_messenger_interface) m_messenger_interface->messageTransmited(msg);
 }

@@ -2,7 +2,7 @@
 #include "string.h"
 #include "message_experience_status.h"
 #include "databasebase.h"
-#include "messengereventbase.h"
+#include "messengerinterfacebase.h"
 
 // ==============================================================
 // ==============================================================
@@ -33,13 +33,13 @@ void Message_EXPERIENCE_STATUS::decode(const unsigned char *buff_data)
     ExperienceStatus= ((short)buff_data[0] << 8) + buff_data[1];
 
 #ifdef MESSENGER_FULL
-    if (m_event_mgr) {
+    if (m_messenger_interface) {
         char name[20];
         char val_str[10];
         strcpy(name, "ExperienceStatus");
         sprintf(val_str, "%d", ExperienceStatus);
-        m_event_mgr->dataUpdated(name, val_str);
-        if (ExperienceStatus != old_ExperienceStatus) m_event_mgr->dataChanged(name, val_str);
+        m_messenger_interface->dataUpdated(name, val_str);
+        if (ExperienceStatus != old_ExperienceStatus) m_messenger_interface->dataChanged(name, val_str);
     }
 #endif // MESSENGER_FULL
 }
