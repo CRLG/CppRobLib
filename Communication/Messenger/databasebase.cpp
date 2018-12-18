@@ -60,6 +60,19 @@ void DatabaseBase::initMessages()
 }
 
 // ___________________________________________________________
+/*! \brief Clean messages.
+ *
+ */
+void DatabaseBase::restart()
+{
+    for (int i=0; i<getMessageCount(); i++) {
+        if (m_p_messages_list[i]) {
+            m_p_messages_list[i]->isNewMessage();
+        }
+    }
+}
+
+// ___________________________________________________________
 void DatabaseBase::decode(const tMessengerFrame* frame)
 {
     for (unsigned short int i=0; i<getMessageCount(); i++) {

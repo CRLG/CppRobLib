@@ -25,6 +25,7 @@ public:
     void setTransporter(TransporterBase *messenger);
     void setMessengerInterface(MessengerInterfaceBase* messenger_interface);
 
+    void restart();
 protected :
     MessageBase **m_p_messages_list;   // pointer table (table is allocated by child)
 
