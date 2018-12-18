@@ -30,6 +30,7 @@ public:
     void setDirection(tMessageDirection direction);
     void setDestinationAddress(unsigned short address);
     void setSourceAddress(unsigned short address);
+    bool isNewMessage();
 
     inline unsigned short getID() { return m_id; }
     inline unsigned short getDLC() { return m_dlc; }
@@ -43,6 +44,7 @@ protected :
     tMessageDirection m_direction;
     unsigned short m_destination_address;
     unsigned short m_source_address;
+    bool m_updated;
 
     DatabaseBase *m_database;
     MessengerInterfaceBase *m_messenger_interface;

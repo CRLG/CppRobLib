@@ -42,6 +42,7 @@ void Message_TIMESTAMP_MATCH::decode(const unsigned char *buff_data)
         if (Timestamp != old_Timestamp) m_messenger_interface->dataChanged(name, val_str);
     }
 #endif // MESSENGER_FULL
+    m_updated = true;
 }
 
 

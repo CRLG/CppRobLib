@@ -9,6 +9,7 @@ MessageBase::MessageBase() :
     m_direction(MSG_RXTX),
     m_destination_address(0),
     m_source_address(0),
+    m_updated(0),
     m_database(NULL),
     m_messenger_interface(NULL)
 {
@@ -75,6 +76,20 @@ void MessageBase::setMessengerInterface(MessengerInterfaceBase* messenger_interf
 const char* MessageBase::getName()
 {
     return "";
+}
+
+// ____________________________________________________________
+/*! \brief Return true if a new message is available and data are updated.
+ *
+ * \param frame : the frame to decode
+ */
+bool MessageBase::isNewMessage()
+{
+    if (m_updated) {
+        m_updated = false;
+        return true;
+    }
+    return false;
 }
 
 // ____________________________________________________________

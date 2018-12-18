@@ -42,6 +42,7 @@ void Message_EXPERIENCE_STATUS::decode(const unsigned char *buff_data)
         if (ExperienceStatus != old_ExperienceStatus) m_messenger_interface->dataChanged(name, val_str);
     }
 #endif // MESSENGER_FULL
+    m_updated = true;
 }
 
 
