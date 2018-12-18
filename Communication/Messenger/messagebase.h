@@ -17,6 +17,8 @@ class MessengerInterfaceBase;
 class MessageBase
 {
 public:
+    static const long NO_PERIODIC = -1;  // for m_tx_period
+
     MessageBase();
     virtual ~MessageBase();
 
@@ -30,7 +32,9 @@ public:
     void setDirection(tMessageDirection direction);
     void setDestinationAddress(unsigned short address);
     void setSourceAddress(unsigned short address);
+    void setTransmitPeriod(long period_msec);
     bool isNewMessage();
+    bool isTimeToSend(long current_time);
 
     inline unsigned short getID() { return m_id; }
     inline unsigned short getDLC() { return m_dlc; }
@@ -45,6 +49,8 @@ protected :
     unsigned short m_destination_address;
     unsigned short m_source_address;
     bool m_updated;
+    long m_tx_period;
+    long m_last_time_tx;
 
     DatabaseBase *m_database;
     MessengerInterfaceBase *m_messenger_interface;

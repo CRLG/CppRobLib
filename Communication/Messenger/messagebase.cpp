@@ -10,6 +10,7 @@ MessageBase::MessageBase() :
     m_destination_address(0),
     m_source_address(0),
     m_updated(0),
+    m_tx_period(NO_PERIODIC),
     m_database(NULL),
     m_messenger_interface(NULL)
 {
@@ -50,6 +51,16 @@ void MessageBase::setSourceAddress(unsigned short address)
 }
 
 // ____________________________________________________________
+/*! \brief Set the transmission period.
+ *
+ * \param period_msec: the transmission period [msec]
+ */
+void MessageBase::setTransmitPeriod(long period_msec)
+{
+    m_tx_period = period_msec;
+}
+
+// ____________________________________________________________
 /*! \brief Set the database the message belong to.
  *
  * \param database : the database the message belong to
@@ -87,6 +98,25 @@ bool MessageBase::isNewMessage()
 {
     if (m_updated) {
         m_updated = false;
+        return true;
+    }
+    return false;
+}
+
+//___________________________________________________________________________
+ /*!
+   \brief Check if the message must be transmitted
+   \param --
+   \return true if it's time to send the message
+*/
+bool MessageBase::isTimeToSend(long current_time)
+{
+    if (m_tx_period == NO_PERIODIC) return false;
+
+    long diff = current_time - m_last_time_tx;
+    if ( (diff >= m_tx_period) || (diff < 0) )
+    {
+        m_last_time_tx = current_time;
         return true;
     }
     return false;
