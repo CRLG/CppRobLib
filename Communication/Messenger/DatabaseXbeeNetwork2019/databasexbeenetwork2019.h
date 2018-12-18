@@ -1,5 +1,5 @@
-#ifndef _DATABASE_SYSTEM_CUP_2019_H
-#define _DATABASE_SYSTEM_CUP_2019_H
+#ifndef _DATABASE_XBEE_NETWORK_2019_H
+#define _DATABASE_XBEE_NETWORK_2019_H
 
 #include "message_timestamp_match.h"
 #include "message_experience_status.h"
@@ -9,11 +9,11 @@
 // ====================================================
 //        DATABASE
 // ====================================================
-class DatabaseSystemCup2019 : public DatabaseBase
+class DatabaseXbeeNetwork2019 : public DatabaseBase
 {
 public:
-    DatabaseSystemCup2019();
-    ~DatabaseSystemCup2019();
+    DatabaseXbeeNetwork2019();
+    ~DatabaseXbeeNetwork2019();
 
     virtual const char *getName();
     virtual void getVersion(unsigned char *maj, unsigned char *min);
@@ -28,4 +28,4 @@ private :
     void initMessages();
 };
 
-#endif // _DATABASE_SYSTEM_CUP_2019_H
+#endif // _DATABASE_XBEE_NETWORK_2019_H
