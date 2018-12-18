@@ -10,6 +10,7 @@
 
 class MessageBase;
 class TransporterBase;
+class DatabaseBase;
 
 class MessengerInterfaceBase
 {
