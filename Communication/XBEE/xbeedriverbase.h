@@ -9,15 +9,21 @@ typedef enum {
     XBEE_TIMEOUT,
     XBEE_CHECKSUM_ERROR,
     XBEE_WRITE_ERROR,
+    XBEE_INIT_ERROR,
 }tXbeeErr;
 
 // ====================================================
 //               XBEE SETTINGS
 // ====================================================
 typedef struct {
-    unsigned short ID;  //! XBEE ID
-    // baud rate ?
-    // ...
+    char PANID[4];          // XBEE NETWORK ID      (4 char : 0 à F en ASCII)
+    char CHANNEL[2];        // Channel du reseau    (2 char : 0 à F en ASCII)
+    unsigned char ID;             //XBEE ID               (4 char : 0 à F en ASCII)
+    unsigned char APIMODE;           //Definit le mode de transmission (0 ou 1 en ASCII)
+    unsigned char SECURITY;          //Active la clé reseau  (0 ou 1 en ASCII)
+    char KEY[32];            //clé reseau            (32 char : 0 à F en ASCII)
+    unsigned char COORDINATOR;       //Coordinateur du reseau ou routeur (0 ou 1 en ASCII)
+    unsigned char COORDINATOR_OPTION;      //Option du coordinateur (0x04 = autorise les Xbee à rejoindre son reseau)
 }tXbeeSettings;
 
 
@@ -26,16 +32,34 @@ typedef struct {
 // ====================================================
 #define XBEE_MAX_DATA_LEN    32
 typedef struct {
-    unsigned short SourceID;      //! TODO : peut Ãªtre qu'on en a pas besoin Ã  ce niveau lÃ  ?? A supprimer sinon
+    unsigned char FrameType;        //Type de message
+    unsigned int SourceID;          //Source du message envoyé
     unsigned short DestinationID;   //! TODO : peut Ãªtre qu'on en a pas besoin Ã  ce niveau lÃ  ?? A supprimer sinon
-    unsigned char DLC; // Data Lenght
+    unsigned int DLC; // Data Lenght
     unsigned char Data[XBEE_MAX_DATA_LEN];
+    unsigned char Checksum;
 }tXbeeMessage;
+
+// ====================================================
+//               XBEE RECEPTION STATE
+// ====================================================
+typedef enum {
+    XBEE_HEADER = 0,
+    XBEE_LENGTH_MSB,
+    XBEE_LENGTH_LSB,
+    XBEE_FRAME,
+    XBEE_SOURCE_MSB,
+    XBEE_SOURCE_LSB,
+    XBEE_RSSI,
+    XBEE_OPTION,
+    XBEE_DATA,
+    XBEE_CHECKSUM,
+}xmessage_state;
 
 // ====================================================
 //
 // ====================================================
-#define XBEE_BROADCAST_ID 0x1234  //! TODO : valeur mise au pif. Mettre la valeur de la doc XBEE qui permet d'adresser tous les XBEE
+#define XBEE_BROADCAST_ID 0xFFFF  //valeur de la doc XBEE qui permet d'adresser tous les XBEE
 
 // ====================================================
 //        BASE CLASS FOR XBEE DRIVER
@@ -61,6 +85,16 @@ public:
     // call this method to encode and send data in a Xbee format packet
     virtual void encode(unsigned char *buff_data, unsigned short buff_size, unsigned short dest_address=0);
 
+    //call this method to initialize Xbee register
+    virtual void setRegister(char *parameter, unsigned char *value, unsigned short valueLength=1);
+    virtual void setRegister(char *parameter, unsigned char value);
+
+    //call this method to get the value of a register or apply the parameters
+    virtual void getRegister(char *parameter);
+
+    //call this method to check the setting of a register is ok
+    virtual tXbeeErr decodeInit(unsigned char *buff_data, unsigned char buff_size);
+
     // High level API
     virtual tXbeeErr init(const tXbeeSettings& settings);
     virtual tXbeeErr connect();
@@ -69,18 +103,29 @@ public:
     virtual tXbeeErr reset();
 
     void setID(unsigned short id);
-    unsigned short getID();
+    unsigned char getID();
 
 private :
-    unsigned short m_id;
+    //Parametres xbee
+    unsigned char m_panid[4];
+    unsigned char m_channel[2];
+    unsigned char m_id;
+    unsigned char m_apimode;
+    unsigned char m_security;
+    unsigned char m_key[32];
+    unsigned char m_coordinator;
+    unsigned char m_coordinator_option;
+
     //! Compute checksum from the packet
     unsigned char getChecksum(unsigned char *packet);
     bool isXMessageValid(tXbeeMessage *msg);
 
     //! Current packet
     tXbeeMessage m_current_xmessage;   //"xmessage" = Xbee message
-    unsigned char m_xmessage_state;
-    unsigned char m_xmessage_index;
+    //unsigned char m_xmessage_state;
+    unsigned char m_xmessage_index;    //! TO DO : a initialiser a 0 a l'init
+    xmessage_state m_xmessage_state;
+
 };
 
 #endif // _XBEE_DRIVER_BASE_H_
