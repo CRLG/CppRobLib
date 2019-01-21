@@ -55,12 +55,13 @@ tXbeeErr XbeeDriverBase::init(const tXbeeSettings& settings)
 
     //! Mettre un delay d'une sec
     unsigned long delay = 100000;
-    unsigned long delay_1sec = 1e6;
+    unsigned long delay_1sec2 = 1200000;
 
-    delay_us(delay_1sec);
+    delay_us(delay_1sec2);
     unsigned char Plus[] = "+++";
     write(Plus, 3);
-    delay_us(delay_1sec);
+    delay_us(delay_1sec2);
+
     setRegister("ID", m_panid, 4);
     delay_us(delay);
     setRegister("CH", m_channel, 2);
@@ -78,7 +79,7 @@ tXbeeErr XbeeDriverBase::init(const tXbeeSettings& settings)
     setRegister("AP", m_apimode);
     delay_us(delay);
     getRegister("CN");      //apply parameters
-    delay_us(delay_1sec);
+    delay_us(delay_1sec2);
 
     return dummy;
 }
