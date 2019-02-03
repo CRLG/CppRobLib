@@ -13,7 +13,7 @@ public:
     virtual void encode(unsigned char *buff_data);
 
     typedef enum {
-        EXPER_WAITING_FOR_START = 0,
+        EXPERIENCE_WAITING_FOR_START = 0,
         EXPERIENCE_IN_PROGRESS,
         EXPERIENCE_FINISHED,
         EXPERIENCE_ERROR = -1
