@@ -198,7 +198,7 @@ void XbeeDriverBase::encode(unsigned char *buff_data, unsigned short buff_size, 
     xbuff[2] = buff_size + 5;                   //LSB longueur message : donnee utile + des parametres d'envoi du message
     xbuff[3] = 0x01;                            //definit fonction du message, ici envoi vers un autre module
     xbuff[4] = 0x00;                            //ACK : 0 = no ACK (pas tout compris)
-    xbuff[5] = 0x00;                            //MSB : dest_adress
+    xbuff[5] = dest_address>>8;                 //MSB : dest_adress
     xbuff[6] = dest_address;                    //LSB : dest_adress
     xbuff[7] = 0x01;                            //OPTION : 1 = disable ACK
     for(int i =0;i<buff_size;i++){              //donnee utile
