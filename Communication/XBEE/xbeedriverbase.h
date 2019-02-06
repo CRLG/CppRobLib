@@ -117,15 +117,13 @@ private :
     unsigned char m_coordinator_option;
 
     //! Compute checksum from the packet
-    unsigned char getChecksum(unsigned char *packet);
-    bool isXMessageValid(tXbeeMessage *msg);
+    unsigned char getChecksum(unsigned char *xpacket);
 
     //! Current packet
     tXbeeMessage m_current_xmessage;   //"xmessage" = Xbee message
     //unsigned char m_xmessage_state;
     unsigned char m_xmessage_index;    //! TO DO : a initialiser a 0 a l'init
     xmessage_state m_xmessage_state;
-
 };
 
 #endif // _XBEE_DRIVER_BASE_H_

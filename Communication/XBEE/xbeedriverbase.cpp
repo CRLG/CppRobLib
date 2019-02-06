@@ -192,7 +192,6 @@ void XbeeDriverBase::encode(unsigned char *buff_data, unsigned short buff_size, 
 
     unsigned char xbuff_size = buff_size + 9;
     unsigned char xbuff[xbuff_size];
-    unsigned short checksum = 0;
     xbuff[0] = 0x7E;                            //entete Xbee en mode API
     xbuff[1] = 0x00;                            //MSB longueur message : donnee utile + des parametres d'envoi du message
     xbuff[2] = buff_size + 5;                   //LSB longueur message : donnee utile + des parametres d'envoi du message
@@ -204,10 +203,7 @@ void XbeeDriverBase::encode(unsigned char *buff_data, unsigned short buff_size, 
     for(int i =0;i<buff_size;i++){              //donnee utile
         xbuff[8+i] = buff_data[i];
     }
-    for(int i =3;i<buff_size+8;i++){            //calcul le checksum sur les parametres du message et sur la donnee utile
-          checksum += xbuff[i];
-    }
-    xbuff[buff_size+8] = 0xFF - checksum;       //checksum message Xbee
+    xbuff[buff_size+8] = getChecksum(xbuff);
 
     write(xbuff, xbuff_size);                   //envoi du message
 }
@@ -240,6 +236,7 @@ void XbeeDriverBase::decode(unsigned char newData)
         case XBEE_HEADER :      //Header du message Xbee
             if (newData == 0x7E) {
                 m_xmessage_state = XBEE_LENGTH_MSB;
+                m_current_xmessage.Checksum = 0;
             }
             break;
         case XBEE_LENGTH_MSB :      //Taille de la donnée + les options
@@ -256,20 +253,28 @@ void XbeeDriverBase::decode(unsigned char newData)
                 m_current_xmessage.DLC -= 5;                //Taille de la donnée utile
                 m_xmessage_state = XBEE_SOURCE_MSB;
             }
+            else {
+               m_xmessage_state = XBEE_HEADER;
+            }
+            m_current_xmessage.Checksum += newData;
             break;
         case XBEE_SOURCE_MSB :      //Source du message
             m_current_xmessage.SourceID = newData << 8;
             m_xmessage_state = XBEE_SOURCE_LSB;
+            m_current_xmessage.Checksum += newData;
             break;
         case XBEE_SOURCE_LSB :      //Source du message
             m_current_xmessage.SourceID += newData;
             m_xmessage_state = XBEE_RSSI;
+            m_current_xmessage.Checksum += newData;
             break;
         case XBEE_RSSI :        //Puissance du signal reçu
             m_xmessage_state = XBEE_OPTION;
+            m_current_xmessage.Checksum += newData;
             break;
         case XBEE_OPTION :
             m_xmessage_state = XBEE_DATA;
+            m_current_xmessage.Checksum += newData;
             break;
         case XBEE_DATA :
             m_current_xmessage.Data[m_xmessage_index] = newData;
@@ -278,11 +283,13 @@ void XbeeDriverBase::decode(unsigned char newData)
                 m_xmessage_index = 0;
                 m_xmessage_state = XBEE_CHECKSUM;
             }
+            m_current_xmessage.Checksum += newData;
             break;
         case XBEE_CHECKSUM :                                    //Checksum du message Xbee : Vérifie la transmission UART
-                m_current_xmessage.Checksum = newData;
+            if (newData == (0xFF - m_current_xmessage.Checksum)) {
                 readyBytes(m_current_xmessage.Data, m_current_xmessage.DLC, m_current_xmessage.SourceID);
-                m_xmessage_state = XBEE_HEADER;
+            }
+            m_xmessage_state = XBEE_HEADER;
             break;
     }
 }
@@ -295,29 +302,12 @@ void XbeeDriverBase::decode(unsigned char newData)
  * \return the checksum
  * \remarks :
   */
-unsigned char XbeeDriverBase::getChecksum(unsigned char *packet)
+unsigned char XbeeDriverBase::getChecksum(unsigned char *xpacket)
 {
     unsigned char sum=0;
-//! TODO implement the correct checksum algorithm
-/*    for (int i=2; i<=2+packet[3]; i++) {
-        sum+= packet[i];
+    unsigned short xpacket_size = ((unsigned short)xpacket[1]<<8) + xpacket[2];
+    for (int i=3; i<3+xpacket_size; i++) {
+        sum+= xpacket[i];
     }
-*/
     return ~sum;
-}
-
-// ____________________________________________________________
-/*! \brief Check if packet is valid.
- *   A valid packet is :
- *      header is xxxx
- *      ...
- *      checksum is OK
- *
- * \param packet : the packet to compute
- * \return the checksum
- */
-//!
-bool XbeeDriverBase::isXMessageValid(tXbeeMessage *msg)
-{
-   return true;
 }
