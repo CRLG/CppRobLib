@@ -281,6 +281,7 @@ void XbeeDriverBase::decode(unsigned char newData)
             break;
         case XBEE_CHECKSUM :                                    //Checksum du message Xbee : Vérifie la transmission UART
                 m_current_xmessage.Checksum = newData;
+                readyBytes(m_current_xmessage.Data, m_current_xmessage.DLC, m_current_xmessage.SourceID);
                 m_xmessage_state = XBEE_HEADER;
             break;
     }
