@@ -24,6 +24,7 @@ public:
 
     void setTransporter(TransporterBase *messenger);
     void setMessengerInterface(MessengerInterfaceBase* messenger_interface);
+    void checkAndSendPeriodicMessages(long current_time);
 
     void restart();
 protected :

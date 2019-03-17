@@ -102,3 +102,20 @@ void DatabaseBase::encode(MessageBase* msg)
     if (m_transporter) m_transporter->encode(&frame);
     if (m_messenger_interface) m_messenger_interface->messageTransmited(msg);
 }
+
+
+// ____________________________________________________________
+/*! \brief Check for each message if it's time to send.
+ *
+ * \param current_time : the current_time [msec]
+ */
+void DatabaseBase::checkAndSendPeriodicMessages(long current_time)
+{
+    for (int i=0; i<getMessageCount(); i++) {
+        if (m_p_messages_list[i]) {
+            if (m_p_messages_list[i]->isTimeToSend(current_time)) {
+                m_p_messages_list[i]->send();
+            }
+        }
+    }
+}
