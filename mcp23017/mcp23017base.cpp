@@ -133,4 +133,9 @@ unsigned char MCP23017Base::readPortB(void)
     return readRegister(MCP23017_GPIOB);
 }
 
+// ____________________________________________________________
+void MCP23017Base::refreshOutputs(void)
+{
+    writePorts(m_port_A, m_port_B);
+}
 

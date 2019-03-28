@@ -49,6 +49,8 @@ typedef enum {
     unsigned char readPortA(void);
     unsigned char readPortB(void);
 
+    void refreshOutputs(void);
+
 private : 
     virtual void writeI2C(unsigned char addr, unsigned char *data, unsigned char len) = 0;
     virtual void readI2C(unsigned char addr, unsigned char *dest_data, unsigned char len) = 0;
