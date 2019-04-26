@@ -4,7 +4,8 @@
 
 XbeeDriverBase::XbeeDriverBase()
     : m_id(0),
-      m_xmessage_index(0)
+      m_xmessage_index(0),
+      m_xmessage_state(XBEE_HEADER)
 
 {
 }
@@ -51,7 +52,6 @@ tXbeeErr XbeeDriverBase::init(const tXbeeSettings& settings)
     }
     m_coordinator = settings.COORDINATOR;
     m_coordinator_option = settings.COORDINATOR_OPTION;
-    m_xmessage_index = 0;
 
     //! Mettre un delay d'une sec
     unsigned long delay = 100000;
@@ -80,6 +80,8 @@ tXbeeErr XbeeDriverBase::init(const tXbeeSettings& settings)
     delay_us(delay);
     getRegister("CN");      //apply parameters
     delay_us(delay_1sec2);
+
+    m_xmessage_state = XBEE_HEADER;
 
     return dummy;
 }
@@ -237,6 +239,7 @@ void XbeeDriverBase::decode(unsigned char newData)
             if (newData == 0x7E) {
                 m_xmessage_state = XBEE_LENGTH_MSB;
                 m_current_xmessage.Checksum = 0;
+                m_xmessage_index = 0;
             }
             break;
         case XBEE_LENGTH_MSB :      //Taille de la donnée + les options
@@ -289,6 +292,9 @@ void XbeeDriverBase::decode(unsigned char newData)
             if (newData == (0xFF - m_current_xmessage.Checksum)) {
                 readyBytes(m_current_xmessage.Data, m_current_xmessage.DLC, m_current_xmessage.SourceID);
             }
+            m_xmessage_state = XBEE_HEADER;
+            break;
+        default :
             m_xmessage_state = XBEE_HEADER;
             break;
     }
