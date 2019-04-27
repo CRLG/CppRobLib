@@ -40,9 +40,9 @@ public:
     // This method is called by messenger (database) to inform a message was transmited
     virtual void messageTransmited(MessageBase *msg);
     // This method is called by messenger (message) to inform a data in a message was updated
-    virtual void dataUpdated(char *name, char *val_str);
+    virtual void dataUpdated(MessageBase *msg, char *name, char *val_str);
     // This method is called by messenger (message) to inform a data in a message changed value
-    virtual void dataChanged(char *name, char *val_str);
+    virtual void dataChanged(MessageBase *msg, char *name, char *val_str);
 
 protected :
     TransporterBase *m_transporter;

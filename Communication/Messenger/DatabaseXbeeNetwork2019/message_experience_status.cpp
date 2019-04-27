@@ -34,12 +34,12 @@ void Message_EXPERIENCE_STATUS::decode(const unsigned char *buff_data)
 
 #ifdef MESSENGER_FULL
     if (m_messenger_interface) {
-        char name[40];
+        char name[20];
         char val_str[10];
-        sprintf(name, "%s.ExperienceStatus", getName());
+        strcpy(name, "ExperienceStatus");
         sprintf(val_str, "%d", ExperienceStatus);
-        m_messenger_interface->dataUpdated(name, val_str);
-        if (ExperienceStatus != old_ExperienceStatus) m_messenger_interface->dataChanged(name, val_str);
+        m_messenger_interface->dataUpdated(this, name, val_str);
+        if (ExperienceStatus != old_ExperienceStatus) m_messenger_interface->dataChanged(this, name, val_str);
     }
 #endif // MESSENGER_FULL
     m_updated = true;

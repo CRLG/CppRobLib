@@ -70,15 +70,17 @@ void MessengerInterfaceBase::messageTransmited(MessageBase *msg)
 }
 
 // ____________________________________________________________
-void MessengerInterfaceBase::dataUpdated(char *name, char *val_str)
+void MessengerInterfaceBase::dataUpdated(MessageBase *msg, char *name, char *val_str)
 {
+    (void)msg;
     (void)name;
     (void)val_str;
 }
 
 // ____________________________________________________________
-void MessengerInterfaceBase::dataChanged(char *name, char *val_str)
+void MessengerInterfaceBase::dataChanged(MessageBase *msg, char *name, char *val_str)
 {
+    (void)msg;
     (void)name;
     (void)val_str;
 }
