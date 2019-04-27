@@ -50,44 +50,44 @@ void Message_BALISE_POSITIONS::decode(const unsigned char *buff_data)
 
 #ifdef MESSENGER_FULL
     if (m_messenger_interface) {
-        char name[25];
+        char name[45];
         char val_str[10];
-        strcpy(name, "PosX_Grosbot");
+        sprintf(name, "%s.PosX_Grosbot", getName());
         sprintf(val_str, "%d", PosX_Grosbot);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosX_Grosbot != old_PosX_Grosbot) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "PosY_Grosbot");
+        sprintf(name, "%s.PosY_Grosbot", getName());
         sprintf(val_str, "%d", PosY_Grosbot);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosY_Grosbot != old_PosY_Grosbot) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "PosX_Minibot");
+        sprintf(name, "%s.PosX_Minibot", getName());
         sprintf(val_str, "%d", PosX_Minibot);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosX_Minibot != old_PosX_Minibot) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "PosY_Minibot");
+        sprintf(name, "%s.PosY_Minibot", getName());
         sprintf(val_str, "%d", PosY_Minibot);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosY_Minibot != old_PosY_Minibot) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "PosX_Adversaire1");
+        sprintf(name, "%s.PosX_Adversaire1", getName());
         sprintf(val_str, "%d", PosX_Adversaire1);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosX_Adversaire1 != old_PosX_Adversaire1) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "PosY_Adversaire1");
+        sprintf(name, "%s.PosY_Adversaire1", getName());
         sprintf(val_str, "%d", PosY_Adversaire1);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosY_Adversaire1 != old_PosY_Adversaire1) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "PosX_Adversaire2");
+        sprintf(name, "%s.PosX_Adversaire2", getName());
         sprintf(val_str, "%d", PosX_Adversaire2);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosX_Adversaire2 != old_PosX_Adversaire2) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "PosY_Adversaire2");
+        sprintf(name, "%s.PosY_Adversaire2", getName());
         sprintf(val_str, "%d", PosY_Adversaire2);
         m_messenger_interface->dataUpdated(name, val_str);
         if (PosY_Adversaire2 != old_PosY_Adversaire2) m_messenger_interface->dataChanged(name, val_str);

@@ -38,19 +38,19 @@ void Message_ROBOT_LEGO_2019::decode(const unsigned char *buff_data)
 
 #ifdef MESSENGER_FULL
     if (m_messenger_interface) {
-        char name[25];
+        char name[45];
         char val_str[10];
-        strcpy(name, "Nb_points_lego");
+        sprintf(name, "%s.Nb_points_lego", getName());
         sprintf(val_str, "%d", Nb_points_lego);
         m_messenger_interface->dataUpdated(name, val_str);
         if (Nb_points_lego != old_Nb_points_lego) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "Atomes_distr_removed");
+        sprintf(name, "%s.Atomes_distr_removed", getName());
         sprintf(val_str, "%d", Atomes_distr_removed);
         m_messenger_interface->dataUpdated(name, val_str);
         if (Atomes_distr_removed != old_Atomes_distr_removed) m_messenger_interface->dataChanged(name, val_str);
 
-        strcpy(name, "Nb_atomes_balance_lego");
+        sprintf(name, "%s.Nb_atomes_balance_lego", getName());
         sprintf(val_str, "%d", Nb_atomes_balance_lego);
         m_messenger_interface->dataUpdated(name, val_str);
         if (Nb_atomes_balance_lego != old_Nb_atomes_balance_lego) m_messenger_interface->dataChanged(name, val_str);

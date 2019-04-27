@@ -34,9 +34,9 @@ void Message_EXPERIENCE_STATUS::decode(const unsigned char *buff_data)
 
 #ifdef MESSENGER_FULL
     if (m_messenger_interface) {
-        char name[20];
+        char name[40];
         char val_str[10];
-        strcpy(name, "ExperienceStatus");
+        sprintf(name, "%s.ExperienceStatus", getName());
         sprintf(val_str, "%d", ExperienceStatus);
         m_messenger_interface->dataUpdated(name, val_str);
         if (ExperienceStatus != old_ExperienceStatus) m_messenger_interface->dataChanged(name, val_str);

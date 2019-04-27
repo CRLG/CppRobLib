@@ -34,9 +34,9 @@ void Message_TIMESTAMP_MATCH::decode(const unsigned char *buff_data)
 
 #ifdef MESSENGER_FULL
     if (m_messenger_interface) {
-        char name[16];
+        char name[30];
         char val_str[10];
-        strcpy(name, "Timestamp");
+        sprintf(name, "%s.Timestamp", getName());
         sprintf(val_str, "%d", Timestamp);
         m_messenger_interface->dataUpdated(name, val_str);
         if (Timestamp != old_Timestamp) m_messenger_interface->dataChanged(name, val_str);
