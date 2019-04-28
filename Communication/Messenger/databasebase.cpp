@@ -46,6 +46,12 @@ const char* DatabaseBase::getName()
     return "";
 }
 
+// ____________________________________________________________
+const char* DatabaseBase::NodeIdToName(unsigned short id)
+{
+    return "UNKNOWN";
+}
+
 // ___________________________________________________________
 /*! \brief Link each message with database.
  *

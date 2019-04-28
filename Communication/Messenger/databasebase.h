@@ -21,6 +21,7 @@ public:
 
     virtual const char *getName();
     virtual unsigned short getMessageCount() = 0;  // child provide the number of message in the database
+    virtual const char *NodeIdToName(unsigned short id);
 
     void setTransporter(TransporterBase *messenger);
     void setMessengerInterface(MessengerInterfaceBase* messenger_interface);
