@@ -6,6 +6,12 @@
 #include "message_experience_status.h"
 #include "message_robot_lego_2019.h"
 
+#include "node_grosbot.h"
+#include "node_legobot.h"
+#include "node_balise.h"
+#include "node_experience.h"
+#include "node_diag_tool.h"
+
 #include "databasebase.h"
 
 // ====================================================
@@ -20,17 +26,21 @@ public:
     virtual const char *getName();
     virtual void getVersion(unsigned char *maj, unsigned char *min);
     virtual unsigned short getMessageCount();
-    virtual const char *NodeIdToName(unsigned short id);
+    virtual unsigned short getNodeCount();
 
-    typedef enum {
-        NODE_ID_ROBOT_MECA   = 0x1,
-        NODE_ID_ROBOT_LEGO   = 0x2,
-        NODE_ID_BALISE       = 0x3,
-        NODE_ID_EXPERIENCE   = 0x4,
-        NODE_ID_DIAG_TOOL    = 0x5
-    }tDatabase2019_XbeeID;
+    static const unsigned short NODES_COUNT = 5;
+    NodeBase *m_nodes_list[NODES_COUNT];
 
-#define MESSAGES_COUNT 4
+#define NODE_ID_TEST 5
+
+    NodeGrosbot m_node_grosbot;
+    NodeLegobot m_node_legobot;
+    NodeBalise m_node_balise;
+    NodeExperience m_node_experience;
+    NodeDiagTool m_node_diag_tool;
+
+
+    static const unsigned short MESSAGES_COUNT = 4;
     MessageBase *m_messages_list[MESSAGES_COUNT];
 
     Message_TIMESTAMP_MATCH m_TimestampMatch;
@@ -40,6 +50,7 @@ public:
 
 private :
     void initMessages();
+    void initNodes();
 };
 
 #endif // _DATABASE_XBEE_NETWORK_2019_H

@@ -3,6 +3,7 @@
 DatabaseXbeeNetwork2019::DatabaseXbeeNetwork2019()
 {
     initMessages();
+    initNodes();
 }
 
 DatabaseXbeeNetwork2019::~DatabaseXbeeNetwork2019()
@@ -13,6 +14,12 @@ DatabaseXbeeNetwork2019::~DatabaseXbeeNetwork2019()
 unsigned short DatabaseXbeeNetwork2019::getMessageCount()
 {
     return MESSAGES_COUNT;
+}
+
+// ____________________________________________________________
+unsigned short DatabaseXbeeNetwork2019::getNodeCount()
+{
+    return NODES_COUNT;
 }
 
 // ____________________________________________________________
@@ -29,22 +36,24 @@ void DatabaseXbeeNetwork2019::getVersion(unsigned char *maj, unsigned char *min)
 }
 
 // ___________________________________________________________
-const char* DatabaseXbeeNetwork2019::NodeIdToName(unsigned short id)
+void DatabaseXbeeNetwork2019::initNodes()
 {
-    switch(id) {
-        case NODE_ID_ROBOT_MECA :
-            return "ROBOT_MECA";
-        case NODE_ID_ROBOT_LEGO :
-            return "ROBOT_LEGO";
-        case NODE_ID_BALISE :
-            return "BALISE";
-        case NODE_ID_EXPERIENCE :
-            return "EXPERIENCE";
-        case NODE_ID_DIAG_TOOL :
-            return "DIAG_TOOL";
-        default :
-            return "UNKNOWN";
+    unsigned char i;
+
+    for (i=0; i<getNodeCount(); i++)
+    {
+        m_nodes_list[i] = 0;
     }
+    i=0;
+    m_nodes_list[i++] = &m_node_grosbot;
+    m_nodes_list[i++] = &m_node_legobot;
+    m_nodes_list[i++] = &m_node_balise;
+    m_nodes_list[i++] = &m_node_experience;
+    m_nodes_list[i++] = &m_node_diag_tool;
+
+    m_p_nodes_list = m_nodes_list;
+
+    DatabaseBase::initNodes();
 }
 
 
@@ -66,4 +75,5 @@ void DatabaseXbeeNetwork2019::initMessages()
 
     DatabaseBase::initMessages();
 }
+
 
