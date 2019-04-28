@@ -29,6 +29,26 @@ void DatabaseXbeeNetwork2019::getVersion(unsigned char *maj, unsigned char *min)
 }
 
 // ___________________________________________________________
+const char* DatabaseXbeeNetwork2019::NodeIdToName(unsigned short id)
+{
+    switch(id) {
+        case NODE_ID_ROBOT_MECA :
+            return "ROBOT_MECA";
+        case NODE_ID_ROBOT_LEGO :
+            return "ROBOT_LEGO";
+        case NODE_ID_BALISE :
+            return "BALISE";
+        case NODE_ID_EXPERIENCE :
+            return "EXPERIENCE";
+        case NODE_ID_DIAG_TOOL :
+            return "DIAG_TOOL";
+        default :
+            return "UNKNOWN";
+    }
+}
+
+
+// ___________________________________________________________
 void DatabaseXbeeNetwork2019::initMessages()
 {
     unsigned char i;
