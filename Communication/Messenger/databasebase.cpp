@@ -96,8 +96,8 @@ void DatabaseBase::decode(const tMessengerFrame* frame)
         MessageBase *msg = m_p_messages_list[i];
         if (msg) {
             if ( (msg->getID() == frame->ID) && (msg->getDirection() & MSG_RX) ){
-                msg->decode(frame->Data);
                 msg->setSourceAddress(frame->SourceAddress);
+                msg->decode(frame->Data);
                 if (m_messenger_interface) {
                     long current_time = m_messenger_interface->getTime();
                     msg->setLastTransfertTime(current_time);
