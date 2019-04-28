@@ -84,3 +84,9 @@ void MessengerInterfaceBase::dataChanged(MessageBase *msg, char *name, char *val
     (void)name;
     (void)val_str;
 }
+
+// ____________________________________________________________
+void MessengerInterfaceBase::nodeCommunicationStatusChanged(NodeBase *node)
+{
+    (void)node;
+}

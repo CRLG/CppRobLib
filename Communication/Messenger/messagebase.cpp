@@ -10,7 +10,7 @@ MessageBase::MessageBase() :
     m_destination_address(0),
     m_source_address(0),
     m_updated(0),
-    m_tx_period(NO_PERIODIC),
+    m_transfert_period(NO_PERIODIC),
     m_database(NULL),
     m_messenger_interface(NULL)
 {
@@ -57,7 +57,29 @@ void MessageBase::setSourceAddress(unsigned short address)
  */
 void MessageBase::setTransmitPeriod(long period_msec)
 {
-    m_tx_period = period_msec;
+    m_transfert_period = period_msec;
+    m_direction = MSG_TX;
+}
+
+// ____________________________________________________________
+/*! \brief Set the reception period.
+ *
+ * \param period_msec: the reception period [msec]
+ */
+void MessageBase::setReceivePeriod(long period_msec)
+{
+    m_transfert_period = period_msec;
+    m_direction = MSG_RX;
+}
+
+// ____________________________________________________________
+/*! \brief Set the reception period.
+ *
+ * \param period_msec: the reception period [msec]
+ */
+void MessageBase::setLastTransfertTime(long current_time)
+{
+    m_last_transfert_time = current_time;
 }
 
 // ____________________________________________________________
@@ -109,14 +131,14 @@ bool MessageBase::isNewMessage()
    \param --
    \return true if it's time to send the message
 */
-bool MessageBase::isTimeToSend(long current_time)
+bool MessageBase::isTimeToTransfert(long current_time)
 {
-    if (m_tx_period == NO_PERIODIC) return false;
+    if (m_transfert_period == NO_PERIODIC) return false;
 
-    long diff = current_time - m_last_time_tx;
-    if ( (diff >= m_tx_period) || (diff < 0) )
+    long diff = current_time - m_last_transfert_time;
+    if ( (diff >= m_transfert_period) || (diff < 0) )
     {
-        m_last_time_tx = current_time;
+        m_last_transfert_time = current_time;
         return true;
     }
     return false;

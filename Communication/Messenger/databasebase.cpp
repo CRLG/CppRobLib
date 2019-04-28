@@ -3,9 +3,11 @@
 #include "messagebase.h"
 #include "transporterbase.h"
 #include "messengerinterfacebase.h"
+#include "nodebase.h"
 
 DatabaseBase::DatabaseBase() :
     m_p_messages_list(NULL),
+    m_p_nodes_list(NULL),
     m_transporter(NULL)
 {
 }
@@ -18,10 +20,7 @@ DatabaseBase::~DatabaseBase()
 void DatabaseBase::setTransporter(TransporterBase *transporter)
 {
     if (transporter) {
-        m_transporter = transporter;
-        for (unsigned int i=0; i<getMessageCount(); i++) {
-            if (m_p_messages_list[i]) m_p_messages_list[i]->setDatabase(this);
-        }
+       m_transporter = transporter;
     }
 }
 
@@ -38,18 +37,17 @@ void DatabaseBase::setMessengerInterface(MessengerInterfaceBase *messenger_inter
             m_p_messages_list[i]->setMessengerInterface(messenger_interface);
         }
     }
+    for (int i=0; i<getNodeCount(); i++) {
+        if (m_p_nodes_list[i]) {
+            m_p_nodes_list[i]->setMessengerInterface(messenger_interface);
+        }
+    }
 }
 
 // ____________________________________________________________
 const char* DatabaseBase::getName()
 {
     return "";
-}
-
-// ____________________________________________________________
-const char* DatabaseBase::NodeIdToName(unsigned short id)
-{
-    return "UNKNOWN";
 }
 
 // ___________________________________________________________
@@ -61,6 +59,19 @@ void DatabaseBase::initMessages()
     for (int i=0; i<getMessageCount(); i++) {
         if (m_p_messages_list[i]) {
             m_p_messages_list[i]->setDatabase(this);
+        }
+    }
+}
+
+// ___________________________________________________________
+/*! \brief Link each message with database.
+ *
+ */
+void DatabaseBase::initNodes()
+{
+    for (int i=0; i<getNodeCount(); i++) {
+        if (m_p_nodes_list[i]) {
+            m_p_nodes_list[i]->setDatabase(this);
         }
     }
 }
@@ -87,7 +98,14 @@ void DatabaseBase::decode(const tMessengerFrame* frame)
             if ( (msg->getID() == frame->ID) && (msg->getDirection() & MSG_RX) ){
                 msg->decode(frame->Data);
                 msg->setSourceAddress(frame->SourceAddress);
-                if (m_messenger_interface) m_messenger_interface->newMessageReceived(msg);
+                if (m_messenger_interface) {
+                    long current_time = m_messenger_interface->getTime();
+                    msg->setLastTransfertTime(current_time);
+                    m_messenger_interface->newMessageReceived(msg);
+                    // inform the node a message was received
+                    NodeBase *node = nodeIdToNode(frame->SourceAddress);
+                    if (node) node->newMessageReceived(current_time);
+                }
             }
         }
     }
@@ -106,22 +124,77 @@ void DatabaseBase::encode(MessageBase* msg)
     frame.DestinationAddress = msg->getDestinationAddress();
     msg->encode(frame.Data);
     if (m_transporter) m_transporter->encode(&frame);
-    if (m_messenger_interface) m_messenger_interface->messageTransmited(msg);
+    if (m_messenger_interface) {
+        msg->setLastTransfertTime(m_messenger_interface->getTime());
+        m_messenger_interface->messageTransmited(msg);
+    }
 }
 
 
 // ____________________________________________________________
-/*! \brief Check for each message if it's time to send.
+/*! \brief Check for each TX message if it's time to send
  *
- * \param current_time : the current_time [msec]
  */
-void DatabaseBase::checkAndSendPeriodicMessages(long current_time)
+void DatabaseBase::checkAndSendPeriodicMessages()
 {
+    long current_time = 0;
+    if (m_messenger_interface) current_time = m_messenger_interface->getTime();
+
     for (int i=0; i<getMessageCount(); i++) {
-        if (m_p_messages_list[i]) {
-            if (m_p_messages_list[i]->isTimeToSend(current_time)) {
+        if (m_p_messages_list[i] && (m_p_messages_list[i]->getDirection() & MSG_TX)) {
+            if (m_p_messages_list[i]->isTimeToTransfert(current_time)) {
                 m_p_messages_list[i]->send();
             }
         }
     }
+}
+
+// ____________________________________________________________
+/*! \brief Check for each node the communication
+ *
+ */
+void DatabaseBase::checkNodeCommunication()
+{
+    long current_time = 0;
+    if (m_messenger_interface) current_time = m_messenger_interface->getTime();
+
+    for (int i=0; i<getNodeCount(); i++) {
+        if (m_p_nodes_list[i]) {
+                m_p_nodes_list[i]->diagPresence(current_time);
+        }
+    }
+}
+
+// ____________________________________________________________
+/*! \brief Return the node pointer from ID
+ *
+ */
+NodeBase* DatabaseBase::nodeIdToNode(unsigned short id)
+{
+    for (int i=0; i<getNodeCount(); i++) {
+        if (m_p_nodes_list[i]) {
+            if (m_p_nodes_list[i]->getID() == id) return m_p_nodes_list[i];
+        }
+    }
+    return NULL;
+}
+
+// ____________________________________________________________
+const char* DatabaseBase::nodeIdToName(unsigned short id)
+{
+    NodeBase *node = nodeIdToNode(id);
+    if (node) return node->getName();
+    return "";
+}
+
+// ____________________________________________________________
+MessageBase** DatabaseBase::getMessagesList() const
+{
+    return m_p_messages_list;
+}
+
+// ____________________________________________________________
+NodeBase** DatabaseBase::getNodesList() const
+{
+    return m_p_nodes_list;
 }
