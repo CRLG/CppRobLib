@@ -5,6 +5,7 @@
 #include "message_balise_positions.h"
 #include "message_experience_status.h"
 #include "message_robot_lego_2019.h"
+#include "message_robotlego_status.h"
 
 #include "node_grosbot.h"
 #include "node_legobot.h"
@@ -40,12 +41,13 @@ public:
     NodeDiagTool m_node_diag_tool;
 
 
-    static const unsigned short MESSAGES_COUNT = 4;
+    static const unsigned short MESSAGES_COUNT = 5;
     MessageBase *m_messages_list[MESSAGES_COUNT];
 
     Message_TIMESTAMP_MATCH m_TimestampMatch;
     Message_EXPERIENCE_STATUS m_ExperienceStatus;
     Message_ROBOT_LEGO_2019 m_RobotLego2019;
+    Message_ROBOTLEGO_STATUS m_RobotLegoStatus;
     Message_BALISE_POSITIONS m_BalisePositions;
 
 private :
