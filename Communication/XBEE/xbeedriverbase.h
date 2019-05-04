@@ -30,7 +30,7 @@ typedef struct {
 // ====================================================
 //               XBEE RAW MESSAGE
 // ====================================================
-#define XBEE_MAX_DATA_LEN    32
+#define XBEE_MAX_DATA_LEN    80
 typedef struct {
     unsigned char FrameType;        //Type de message
     unsigned int SourceID;          //Source du message envoyé

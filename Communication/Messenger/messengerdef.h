@@ -1,7 +1,7 @@
 #ifndef _MESSENGER_DEFINITIONS_H
 #define _MESSENGER_DEFINITIONS_H
 
-#define MESSENGER_MAX_DATA_LEN    8
+#define MESSENGER_MAX_DATA_LEN    64
 typedef struct {
     unsigned short ID; // Message ID
     unsigned char DLC; // Data Lenght
