@@ -72,6 +72,7 @@ void DatabaseXbeeNetwork2019::initMessages()
     m_messages_list[i++] = &m_RobotLego2019;
     m_messages_list[i++] = &m_RobotLegoStatus;
     m_messages_list[i++] = &m_BalisePositions;
+    m_messages_list[i++] = &m_FreeString;
 
     m_p_messages_list = m_messages_list;
 
