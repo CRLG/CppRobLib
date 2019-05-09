@@ -63,8 +63,6 @@ bool ServoAXBase::isMoving(unsigned char id, tAxErr *err_status)
 // ____________________________________________________________
 tAxErr ServoAXBase::changeID(unsigned char old_id, unsigned char new_id)
 {
-    if (isPresent(old_id) == false) return AX_NOT_FOUND;
-
     tAxErr err;
     err = write8bitsRegister(old_id, AX_REG_ID, new_id);
     if (err != AX_OK) return AX_NOT_FOUND;
