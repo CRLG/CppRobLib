@@ -68,6 +68,7 @@ void DatabaseXbeeNetwork2019::initMessages()
     }
     i=0;
     m_messages_list[i++] = &m_TimestampMatch;
+    m_messages_list[i++] = &m_GrosbotPosition;
     m_messages_list[i++] = &m_ExperienceStatus;
     m_messages_list[i++] = &m_RobotLego2019;
     m_messages_list[i++] = &m_RobotLegoStatus;

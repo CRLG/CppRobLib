@@ -2,6 +2,7 @@
 #define _DATABASE_XBEE_NETWORK_2019_H
 
 #include "message_timestamp_match.h"
+#include "message_grosbot_position.h"
 #include "message_balise_positions.h"
 #include "message_experience_status.h"
 #include "message_robot_lego_2019.h"
@@ -42,10 +43,11 @@ public:
     NodeDiagTool m_node_diag_tool;
 
 
-    static const unsigned short MESSAGES_COUNT = 6;
+    static const unsigned short MESSAGES_COUNT = 7;
     MessageBase *m_messages_list[MESSAGES_COUNT];
 
     Message_TIMESTAMP_MATCH m_TimestampMatch;
+    Message_GROSBOT_POSITION m_GrosbotPosition;
     Message_EXPERIENCE_STATUS m_ExperienceStatus;
     Message_ROBOT_LEGO_2019 m_RobotLego2019;
     Message_ROBOTLEGO_STATUS m_RobotLegoStatus;
