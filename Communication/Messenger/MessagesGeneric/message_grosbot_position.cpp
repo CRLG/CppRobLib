@@ -8,7 +8,7 @@
 // ==============================================================
 Message_GROSBOT_POSITION::Message_GROSBOT_POSITION()
 {
-    m_id = 0x02;
+    m_id = 0x03;
     m_dlc = 6;
 }
 
