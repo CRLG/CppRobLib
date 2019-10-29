@@ -134,6 +134,27 @@ float dsPicPowerElectrobotBase::getCurrentOut2()
 }
 
 // ______________________________________________
+unsigned short dsPicPowerElectrobotBase::getRawBatteryVoltage()
+{
+    return m_raw_battery_voltage;
+}
+// ______________________________________________
+unsigned short dsPicPowerElectrobotBase::getRawGlobalCurrent()
+{
+    return m_raw_global_current;
+}
+// ______________________________________________
+unsigned short dsPicPowerElectrobotBase::getRawCurrentOut1()
+{
+    return m_raw_current_out1;
+}
+// ______________________________________________
+unsigned short dsPicPowerElectrobotBase::getRawCurrentOut2()
+{
+    return m_raw_current_out2;
+}
+
+// ______________________________________________
 void dsPicPowerElectrobotBase::setOutput(tSwitchOutput output, bool state)
 {
     if (output > OUTPUT_STOR8) return;

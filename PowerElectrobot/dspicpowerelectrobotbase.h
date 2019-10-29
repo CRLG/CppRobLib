@@ -71,6 +71,12 @@ public:
     float getGlobalCurrent();
     float getCurrentOut1();
     float getCurrentOut2();
+
+    unsigned short getRawBatteryVoltage();
+    unsigned short getRawGlobalCurrent();
+    unsigned short getRawCurrentOut1();
+    unsigned short getRawCurrentOut2();
+
     unsigned long getCountError();
 
     void unlockWriteEEPROM();
