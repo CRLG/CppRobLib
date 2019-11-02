@@ -1,7 +1,8 @@
 #include "dspicpowerelectrobotbase.h"
 
 dsPicPowerElectrobotBase::dsPicPowerElectrobotBase()
-    : m_compteurErrCom(0)
+    : m_outputs_port(0),
+      m_compteurErrCom(0)
 {
 
 }
@@ -159,15 +160,33 @@ void dsPicPowerElectrobotBase::setOutput(tSwitchOutput output, bool state)
 {
     if (output > OUTPUT_STOR8) return;
     switch(output) {
-        case OUTPUT_STOR1 : writeRegister(REG_STOR_1, state); break;
-        case OUTPUT_STOR2 : writeRegister(REG_STOR_2, state); break;
-        case OUTPUT_STOR3 : writeRegister(REG_STOR_3, state); break;
-        case OUTPUT_STOR4 : writeRegister(REG_STOR_4, state); break;
-        case OUTPUT_STOR5 : writeRegister(REG_STOR_5, state); break;
-        case OUTPUT_STOR6 : writeRegister(REG_STOR_6, state); break;
-        case OUTPUT_STOR7 : writeRegister(REG_STOR_7, state); break;
-        case OUTPUT_STOR8 : writeRegister(REG_STOR_8, state); break;
+        case OUTPUT_STOR1 : writeRegister(REG_STOR_1, state); setBitPort(0, state); break;
+        case OUTPUT_STOR2 : writeRegister(REG_STOR_2, state); setBitPort(1, state); break;
+        case OUTPUT_STOR3 : writeRegister(REG_STOR_3, state); setBitPort(2, state); break;
+        case OUTPUT_STOR4 : writeRegister(REG_STOR_4, state); setBitPort(3, state); break;
+        case OUTPUT_STOR5 : writeRegister(REG_STOR_5, state); setBitPort(4, state); break;
+        case OUTPUT_STOR6 : writeRegister(REG_STOR_6, state); setBitPort(5, state); break;
+        case OUTPUT_STOR7 : writeRegister(REG_STOR_7, state); setBitPort(6, state); break;
+        case OUTPUT_STOR8 : writeRegister(REG_STOR_8, state); setBitPort(7, state); break;
         default : break;
+    }
+}
+
+// ______________________________________________
+void dsPicPowerElectrobotBase::setOutputPort(unsigned char val)
+{
+    writeRegister(REG_PORT_STOR_1to8, val);
+    m_outputs_port = val;
+}
+
+// ______________________________________________
+void dsPicPowerElectrobotBase::setBitPort(unsigned char bit, bool val)
+{
+    if (val) {
+        m_outputs_port |= (1<<bit);
+    }
+    else {
+        m_outputs_port &= ~(1<<bit);
     }
 }
 
@@ -177,6 +196,12 @@ void dsPicPowerElectrobotBase::setAllOutputs(bool state)
     for (unsigned int i=OUTPUT_STOR1; i<=OUTPUT_STOR8; i++) {
         setOutput((tSwitchOutput)i, state);
     }
+}
+
+// ______________________________________________
+void dsPicPowerElectrobotBase::refreshOuptuts()
+{
+    writeRegister(REG_PORT_STOR_1to8, m_outputs_port);
 }
 
 // ______________________________________________

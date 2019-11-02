@@ -27,6 +27,7 @@ class dsPicPowerElectrobotBase
         REG_STOR_6,
         REG_STOR_7,
         REG_STOR_8,
+        REG_PORT_STOR_1to8,
         REG_STOR_PGED,
         REG_STOR_PGEC,
         REG_CALIB_BATTERY_VOLTAGE_PHYS_POINT_1_H,
@@ -51,7 +52,6 @@ class dsPicPowerElectrobotBase
         REG_EEPROM_RESET_FACTORY,
         // _____________________________
         MAX_REGISTRES_NUMBER
-
     }T_REG_ADDRESS;
     #define EEPROM_WRITE_UNPROTECT_CODE (0x5A)
     #define EEPROM_RESET_FACTORY_CODE (0x69)
@@ -112,7 +112,9 @@ public:
 #define OUTPUT_J19 OUTPUT_STOR8
 
     void setOutput(tSwitchOutput output, bool state);
+    void setOutputPort(unsigned char val);
     void setAllOutputs(bool state);
+    void refreshOuptuts();
 
     unsigned short m_raw_battery_voltage;
     unsigned short m_raw_global_current;
@@ -123,6 +125,8 @@ private :
     void readRegisters();
     void writeRegister(unsigned char reg, unsigned char val);
     void writeWordRegister(unsigned char reg, unsigned short val);
+    void setBitPort(unsigned char bit, bool val);
+    unsigned char m_outputs_port;
     unsigned long m_compteurErrCom;
 
     float m_battery_voltage;
