@@ -199,6 +199,13 @@ void dsPicPowerElectrobotBase::setAllOutputs(bool state)
 }
 
 // ______________________________________________
+unsigned char dsPicPowerElectrobotBase::getOutputPort()
+{
+    return m_outputs_port;
+}
+
+
+// ______________________________________________
 void dsPicPowerElectrobotBase::refreshOuptuts()
 {
     writeRegister(REG_PORT_STOR_1to8, m_outputs_port);

@@ -179,6 +179,7 @@ public:
     void setOutput(tSwitchOutput output, bool state);
     void setOutputPort(unsigned char val);
     void setAllOutputs(bool state);
+    unsigned char getOutputPort();
     void refreshOuptuts();
 
 private :
