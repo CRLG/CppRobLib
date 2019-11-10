@@ -181,11 +181,6 @@ public:
     void setAllOutputs(bool state);
     void refreshOuptuts();
 
-    unsigned short m_raw_battery_voltage;
-    unsigned short m_raw_global_current;
-    unsigned short m_raw_current_out1;
-    unsigned short m_raw_current_out2;
-
 private :
     void readRegisters();
     void writeRegister(unsigned char reg, unsigned char val);
@@ -194,13 +189,19 @@ private :
     unsigned char m_outputs_port;
     unsigned long m_compteurErrCom;
 
+
+protected :
+    unsigned char m_address;
+
+    unsigned short m_raw_battery_voltage;
+    unsigned short m_raw_global_current;
+    unsigned short m_raw_current_out1;
+    unsigned short m_raw_current_out2;
+
     float m_battery_voltage;
     float m_global_current;
     float m_current_out1;
     float m_current_out2;
-
-protected :
-    unsigned char m_address;
 
     float RegisterToBatteryVoltage(unsigned short val);
     float RegisterToGlobalCurrent(unsigned short val);
