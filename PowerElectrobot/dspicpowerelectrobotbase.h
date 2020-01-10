@@ -176,10 +176,10 @@ public:
 #define OUTPUT_J17 OUTPUT_STOR7
 #define OUTPUT_J19 OUTPUT_STOR8
 
-    void setOutput(tSwitchOutput output, bool state);
-    void setOutputPort(unsigned char val);
-    void setAllOutputs(bool state);
-    unsigned char getOutputPort();
+    virtual void setOutput(tSwitchOutput output, bool state);
+    virtual void setOutputPort(unsigned char val);
+    virtual void setAllOutputs(bool state);
+    virtual unsigned char getOutputPort();
     void refreshOuptuts();
 
 private :
