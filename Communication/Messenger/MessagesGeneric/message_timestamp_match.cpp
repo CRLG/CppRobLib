@@ -55,4 +55,14 @@ void Message_TIMESTAMP_MATCH::encode(unsigned char *buff_data)
 {
     buff_data[0] = Timestamp >> 8;
     buff_data[1] = Timestamp & 0xFF;
+
+#ifdef MESSENGER_FULL
+    if (m_messenger_interface) {
+        char name[16];
+        char val_str[10];
+        strcpy(name, "Timestamp");
+        sprintf(val_str, "%d", Timestamp);
+        m_messenger_interface->dataSent(this, name, val_str);
+    }
+#endif // MESSENGER_FULL
 }

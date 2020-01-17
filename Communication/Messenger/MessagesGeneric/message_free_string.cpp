@@ -49,4 +49,12 @@ void Message_FREE_STRING::encode(unsigned char *buff_data)
 {
     memcpy(buff_data, str, STR_BUFFER_SIZE);
     buff_data[STR_BUFFER_SIZE-1] = '\0';
+
+#ifdef MESSENGER_FULL
+    if (m_messenger_interface) {
+        char name[20];
+        strcpy(name, "str");
+        m_messenger_interface->dataSent(this, name, str);
+    }
+#endif // MESSENGER_FULL
 }

@@ -47,6 +47,8 @@ public:
     virtual void dataUpdated(MessageBase *msg, char *name, char *val_str);
     // This method is called by messenger (message) to inform a data in a message changed value
     virtual void dataChanged(MessageBase *msg, char *name, char *val_str);
+    // This method is called by messenger (message) to inform a data in a message was sent
+    virtual void dataSent(MessageBase *msg, char *name, char *val_str);
     // This method is called by messenger (node) to inform the communication status changed (lost communication or communication OK)
     virtual void nodeCommunicationStatusChanged(NodeBase *node);
 

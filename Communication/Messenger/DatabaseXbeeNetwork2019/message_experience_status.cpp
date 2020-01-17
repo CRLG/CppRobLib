@@ -55,4 +55,14 @@ void Message_EXPERIENCE_STATUS::encode(unsigned char *buff_data)
 {
     buff_data[0] = ExperienceStatus >> 8;
     buff_data[1] = ExperienceStatus & 0xFF;
+
+#ifdef MESSENGER_FULL
+    if (m_messenger_interface) {
+        char name[20];
+        char val_str[10];
+        strcpy(name, "ExperienceStatus");
+        sprintf(val_str, "%d", ExperienceStatus);
+        m_messenger_interface->dataSent(this, name, val_str);
+    }
+#endif // MESSENGER_FULL
 }

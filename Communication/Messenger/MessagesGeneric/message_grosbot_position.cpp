@@ -74,4 +74,22 @@ void Message_GROSBOT_POSITION::encode(unsigned char *buff_data)
 
     buff_data[4] = Angle >> 8;
     buff_data[5] = Angle & 0xFF;
+
+#ifdef MESSENGER_FULL
+    if (m_messenger_interface) {
+        char name[30];
+        char val_str[10];
+        strcpy(name, "Position_X");
+        sprintf(val_str, "%d", Position_X);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "Position_Y");
+        sprintf(val_str, "%d", Position_Y);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "Angle");
+        sprintf(val_str, "%d", Angle);
+        m_messenger_interface->dataSent(this, name, val_str);
+    }
+#endif // MESSENGER_FULL
 }

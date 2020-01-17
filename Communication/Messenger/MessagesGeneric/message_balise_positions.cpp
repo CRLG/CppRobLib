@@ -127,4 +127,42 @@ void Message_BALISE_POSITIONS::encode(unsigned char *buff_data)
 
     buff_data[14] = PosY_Adversaire2 >> 8;
     buff_data[15] = PosY_Adversaire2 & 0xFF;
+
+#ifdef MESSENGER_FULL
+    if (m_messenger_interface) {
+        char name[25];
+        char val_str[10];
+        strcpy(name, "PosX_Grosbot");
+        sprintf(val_str, "%d", PosX_Grosbot);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "PosY_Grosbot");
+        sprintf(val_str, "%d", PosY_Grosbot);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "PosX_Minibot");
+        sprintf(val_str, "%d", PosX_Minibot);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "PosY_Minibot");
+        sprintf(val_str, "%d", PosY_Minibot);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "PosX_Adversaire1");
+        sprintf(val_str, "%d", PosX_Adversaire1);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "PosY_Adversaire1");
+        sprintf(val_str, "%d", PosY_Adversaire1);
+        m_messenger_interface->dataSent(this, name, val_str);
+
+        strcpy(name, "PosX_Adversaire2");
+        sprintf(val_str, "%d", PosX_Adversaire2);
+        m_messenger_interface->dataUpdated(this, name, val_str);
+
+        strcpy(name, "PosY_Adversaire2");
+        sprintf(val_str, "%d", PosY_Adversaire2);
+        m_messenger_interface->dataSent(this, name, val_str);
+    }
+#endif // MESSENGER_FULL
 }
