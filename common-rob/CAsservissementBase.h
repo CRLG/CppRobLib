@@ -184,6 +184,7 @@ public :
     virtual void setPosition_XYTeta(float x, float y, float teta);
     virtual void setIndiceSportivite(float idx);
     virtual void setCdeMinCdeMax(int min, int max);
+    virtual float getSensDeplacement();
 
 protected :
     float Calc_carto_cur(float entree_x, float axe_x[], float axe_z[], int nb_point_x);

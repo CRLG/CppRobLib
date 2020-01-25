@@ -1088,3 +1088,10 @@ void CAsservissementBase::setCdeMinCdeMax(int min, int max)
     cde_max = max;
 }
 
+// -----------------------------------------------------------------------------------------------------------------------
+// Retourne le sens de déplacement du robot
+float CAsservissementBase::getSensDeplacement()
+{
+    return copysignf(1.0, erreur_distance);
+}
+
