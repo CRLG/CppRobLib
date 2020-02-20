@@ -508,8 +508,8 @@ if (convergence_conf == 0) // Pas la peine de calculer la commande si on a conve
 		// Filtage de la tension batterie
 		m_tension_batterie_filt_prec = m_tension_batterie_filt;
 		// Nico:mise en commentaire
-		//m_tension_batterie_filt = m_tension_batterie_filt_prec + k_batt * ((Application.m_capteurs.m_b_Mes_Vbat) - m_tension_batterie_filt_prec);
-        // Nico->Guigui : pour récupérer la tension batterie, il faut faire "Application.m_capteurs.m_b_Mes_Vbat"
+		//m_tension_batterie_filt = m_tension_batterie_filt_prec + k_batt * ((Application.m_electrobot.m_b_Mes_Vbat) - m_tension_batterie_filt_prec);
+        // Nico->Guigui : pour récupérer la tension batterie, il faut faire "Application.m_electrobot.m_b_Mes_Vbat"
 		
         // Correction de la commande de manière proportionnelle à la variation de tension batterie avant saturation
 		// Nico:mise en commentaire
