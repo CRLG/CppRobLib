@@ -31,6 +31,8 @@ public:
     virtual unsigned short getScoreMax();
     virtual unsigned char getPrioriteExecution();
     void setPrioriteExecution(unsigned char priorite);
+    virtual bool isEnabled();
+    void setEnabled(bool state);
 
     virtual bool isSucces();
 
@@ -71,6 +73,7 @@ protected :
     }tStateMachineBaseState;
 
     bool            m_main_mission_type;    // Indique si la SM est une mission de haut niveau ou une sous-séquence
+    bool            m_enabled;              // Permet d'interdire l'exécution d'une mission pour qu'elle ne soit pas exécutée en match
     short           m_state;                // Etat de la machine d'état
     short           m_next_state;           // Prochain état
     short           m_old_state;            // Etat précédent

@@ -4,6 +4,7 @@
 SM_StateMachineBase::SM_StateMachineBase()
     : m_ia(nullptr),
       m_main_mission_type(false),
+      m_enabled(true),
       m_state(SM_NOT_INITIALIZED),
       m_next_state(SM_NOT_INITIALIZED),
       m_old_state(SM_NOT_INITIALIZED),
@@ -207,3 +208,16 @@ bool SM_StateMachineBase::isMainMission()
 {
     return m_main_mission_type;
 }
+
+// ________________________________________________
+bool SM_StateMachineBase::isEnabled()
+{
+    return m_enabled;
+}
+
+// ________________________________________________
+void SM_StateMachineBase::setEnabled(bool state)
+{
+    m_enabled = state;
+}
+

@@ -42,7 +42,7 @@ public:
 
     // API
     virtual void step() = 0;
-    virtual void initAllStateMachines() = 0;
+    virtual void init() = 0;
     bool isMatchEnCours();
     bool isMatchTermine();
     void stepAllStateMachines();

@@ -68,7 +68,7 @@ SM_StateMachineBase* IABase::activeNextPertinentMainMission(tAlgoNextPertinentMi
     // Dans cet algo, on recherche la mission qui n'est pas terminée et qui rapportera le plus de point
     case ALGO_PERTINENT_MISSION_SCORE_MAX:
         for (int i=0; i<m_state_machine_count; i++) {
-            if (m_sm_liste[i] && m_sm_liste[i]->isMainMission() && !m_sm_liste[i]->isSucces()) {
+            if (m_sm_liste[i] && m_sm_liste[i]->isMainMission() && m_sm_liste[i]->isEnabled() && !m_sm_liste[i]->isSucces()) {
                 if (m_sm_liste[i]->getScoreMax() > score_max) {
                     next_mission = m_sm_liste[i];
                     score_max = m_sm_liste[i]->getScoreMax();
@@ -80,7 +80,7 @@ SM_StateMachineBase* IABase::activeNextPertinentMainMission(tAlgoNextPertinentMi
      // __________________________________
      case ALGO_PERTINENT_MISSION_CHOIX_PRIORITE:
         for (int i=0; i<m_state_machine_count; i++) {
-            if (m_sm_liste[i] && m_sm_liste[i]->isMainMission() && !m_sm_liste[i]->isSucces()) {
+            if (m_sm_liste[i] && m_sm_liste[i]->isMainMission() && m_sm_liste[i]->isEnabled() && !m_sm_liste[i]->isSucces()) {
                 if (m_sm_liste[i]->getPrioriteExecution() < priorite) {  // petite valeur = le plus prioritaire
                     next_mission = m_sm_liste[i];
                     priorite = m_sm_liste[i]->getPrioriteExecution();
@@ -98,7 +98,7 @@ SM_StateMachineBase* IABase::activeNextPertinentMainMission(tAlgoNextPertinentMi
     case ALGO_PERTINENT_MISSION_NEXT_INDEX:
     default :
         for (int i=0; i<m_state_machine_count; i++) {
-            if ((m_sm_liste[i]) && (m_sm_liste[i]->isMainMission()) && (!m_sm_liste[i]->isSucces())) {
+            if ((m_sm_liste[i]) && (m_sm_liste[i]->isMainMission()) && (m_sm_liste[i]->isEnabled()) && (!m_sm_liste[i]->isSucces())) {
                 next_mission = m_sm_liste[i];
                 activeMainMission(next_mission);
                 break;
