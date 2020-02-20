@@ -10,7 +10,7 @@ class CDetectionObstaclesBase
 {
 public :
     CDetectionObstaclesBase();
-    ~CDetectionObstaclesBase();
+    virtual ~CDetectionObstaclesBase();
 
     virtual void Init();
 

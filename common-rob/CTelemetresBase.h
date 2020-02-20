@@ -10,7 +10,7 @@ class CTelemetresBase
 {
 public :
     CTelemetresBase();
-    ~CTelemetresBase();
+    virtual ~CTelemetresBase();
 
     virtual float getDistanceAVG() = 0;
     virtual float getDistanceAVD() = 0;
