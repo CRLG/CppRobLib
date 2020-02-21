@@ -111,7 +111,7 @@ void SM_Evitement::step()
             Application.m_asservissement.CommandeMouvementXY_TETA(inputs()->X_robot, inputs()->Y_robot, inputs()->angle_robot);
             internals()->evit_debug_etape = 30;
         }
-        gotoStateAfter(EVITEMENT_INIT_CHOICE, 2000);
+        gotoStateAfter(EVITEMENT_INIT_CHOICE, 1000);
 
         if (onExit()) {
         }
@@ -223,6 +223,10 @@ void SM_Evitement::step()
             internals()->evit_debug_etape = 23;
         }
         gotoStateIfConvergenceRapide(STRATEGIE_CONTOURNEMENT_REDRESSE, 5000);
+        // Si un obstacle est détecté pendant cette phase, recommence l'évitement
+        if (inputs()->obstacleDetecte) {
+            gotoState(STRATEGIE_EVITEMENT_FIN);
+        }
         if (onExit()) { }
         break;
     // ___________________________________
@@ -241,6 +245,10 @@ void SM_Evitement::step()
             internals()->evit_debug_etape = 25;
         }
         gotoStateIfConvergenceRapide(STRATEGIE_EVITEMENT_FIN, 5000);
+        // Si un obstacle est détecté pendant cette phase, recommence l'évitement
+        if (inputs()->obstacleDetecte) {
+            gotoState(STRATEGIE_EVITEMENT_FIN);
+        }
         if (onExit()) { }
         break;
 
