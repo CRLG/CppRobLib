@@ -14,11 +14,22 @@ public:
     const char* stateToName(unsigned short state);
 
     typedef enum {
+        // Etat généraux
         EVITEMENT_INIT = SM_StateMachineBase::SM_FIRST_STATE,
         EVITEMENT_INIT_CHOICE,
-        STRATEGIE_EVITEMENT,
+        STRATEGIE_EVITEMENT_FIN,
         SORTIE_EVITEMENT,
         EVITEMENT_ATTENTE,
+
+        // Stratégie d'évitement : CONTOURNEMENT
+        STRATEGIE_CONTOURNEMENT,
+        STRATEGIE_CONTOURNEMENT_ELOIGNEMENT,
+        STRATEGIE_CONTOURNEMENT_ROTATION,
+        STRATEGIE_CONTOURNEMENT_EVACUE,
+        STRATEGIE_CONTOURNEMENT_REDRESSE,
+        STRATEGIE_CONTOURNEMENT_EVACUE_2,
+
+
         STATE_5,
         STATE_6,
         STATE_7,
@@ -32,11 +43,12 @@ public:
         STATE_15,
     }tState;
 
+private :
+    // Sauvegarde du contexte à l'entrée de la stratégie d'évitement
+    // et restauration du contexte à la sortie
+    void saveContext();
+    void restoreContext();
 
-    typedef enum {
-        STRATEGIE_EVITEMENT_ATTENDRE = 0,
-        STRATEGIE_EVITEMENT_CONTOURNER
-    }tChoixStrategie;
 };
 
 #endif // SM_EVITEMENT_H
