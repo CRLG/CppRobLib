@@ -99,12 +99,14 @@ void SM_Evitement::step()
             gotoState(SORTIE_EVITEMENT);
         }
         else {
-            gotoState(EVITEMENT_ATTENTE);
+            gotoState(EVITEMENT_INIT_CHOICE);
         }
 
         if (onExit()) { }
         break;
     // ___________________________________
+    // TODO : cet état n'est plus utilisé.
+    // A confirmer avec des tests complémerntaires avant de le supprimer
     case EVITEMENT_ATTENTE :
         if (onEntry()) {
             // Reste sur place
@@ -244,7 +246,7 @@ void SM_Evitement::step()
             Application.m_asservissement.CommandeMouvementDistanceAngle(internals()->evit_sgn_dist_evacue * (50 + 4*internals()->evit_nombre_tentatives), inputs()->angle_robot);
             internals()->evit_debug_etape = 25;
         }
-        gotoStateIfConvergenceRapide(STRATEGIE_EVITEMENT_FIN, 5000);
+        gotoStateIfConvergenceRapide(STRATEGIE_EVITEMENT_FIN, 2000);
         // Si un obstacle est détecté pendant cette phase, recommence l'évitement
         if (inputs()->obstacleDetecte) {
             gotoState(STRATEGIE_EVITEMENT_FIN);
