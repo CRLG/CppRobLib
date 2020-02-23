@@ -20,6 +20,7 @@ const char* SM_Evitement::stateToName(unsigned short state)
     case STRATEGIE_EVITEMENT_FIN :              return "STRATEGIE_EVITEMENT_FIN";
     case SORTIE_EVITEMENT :                     return "SORTIE_EVITEMENT";
     case EVITEMENT_ATTENTE :                    return "EVITEMENT_ATTENTE";
+    case STRATEGIE_ATTENDRE :                   return "STRATEGIE_ATTENDRE";
     case STRATEGIE_CONTOURNEMENT :              return "STRATEGIE_CONTOURNEMENT";
     case STRATEGIE_CONTOURNEMENT_ELOIGNEMENT :  return "STRATEGIE_CONTOURNEMENT_ELOIGNEMENT";
     case STRATEGIE_CONTOURNEMENT_ROTATION :     return "STRATEGIE_CONTOURNEMENT_ROTATION";
@@ -67,20 +68,18 @@ void SM_Evitement::step()
         if (onEntry()) {
         }
 
-        if ( (internals()->evit_choix_strategie == SM_DatasInterface::STRATEGIE_EVITEMENT_ATTENDRE) || internals()->evit_detection_obstacle_bitfield==0) {
-            // Choix d'une stratégie neutre (simplement attendre)
-            // ou
-            // Plus aucun obstacle -> fin de l'évitement
+        // Plus aucun obstacle -> fin de l'évitement sans attendre
+        if (internals()->evit_detection_obstacle_bitfield==0) {
             gotoState(SORTIE_EVITEMENT);
         }
-        else { // Obstacle toujours présent -> commence la stratégie d'évitement
+        else { // Obstacle toujours présent -> commence une stratégie d'évitement
             internals()->evit_strategie_evitement_en_cours = true;
             if (internals()->evit_choix_strategie == SM_DatasInterface::STRATEGIE_EVITEMENT_CONTOURNER) {
                 gotoState(STRATEGIE_CONTOURNEMENT);
             }
             // TODO : mettre ici les autres stratégies d'évitement possibles s'il y en a
             else {  // Ici comme il n'y a qu'une seule stratégie d'évitement (contournement), on revient dessus dans tous les cas
-                gotoState(STRATEGIE_CONTOURNEMENT);
+                gotoState(STRATEGIE_ATTENDRE);
             }
         }
 
@@ -140,6 +139,15 @@ void SM_Evitement::step()
         }
         break;
 
+    // ===================================================
+    // STRATEGIE D'EVITEMENT : ATTENDRE
+    // Dans cette stratégie, le robot attend sans rien faire un certain temps
+    // ===================================================
+    case STRATEGIE_ATTENDRE :
+        if (onEntry()) { }
+        gotoStateAfter(STRATEGIE_EVITEMENT_FIN, 1000);
+        if (onExit()) { }
+        break;
     // ===================================================
     // STRATEGIE D'EVITEMENT : CONTOURNEMENT
     // ===================================================

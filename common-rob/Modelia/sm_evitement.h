@@ -21,6 +21,9 @@ public:
         SORTIE_EVITEMENT,
         EVITEMENT_ATTENTE,
 
+        // Stratégie d'évitement : ATTENDRE
+        STRATEGIE_ATTENDRE,
+
         // Stratégie d'évitement : CONTOURNEMENT
         STRATEGIE_CONTOURNEMENT,
         STRATEGIE_CONTOURNEMENT_ELOIGNEMENT,
