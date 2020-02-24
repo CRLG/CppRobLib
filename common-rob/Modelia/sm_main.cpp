@@ -45,7 +45,7 @@ void SM_Main::step()
         if (onEntry()) {
         }
         // Couleur de l'équipe
-        inputs()->couleur_equipe = inputs()->dde_couleur_equipe;
+        internals()->couleur_equipe = inputs()->dde_couleur_equipe;
         // Autotests
         if (inputs()->dde_test_actionneurs) {
             m_ia ->m_sm_autotest.start();

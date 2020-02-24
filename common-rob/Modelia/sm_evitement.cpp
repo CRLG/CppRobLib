@@ -281,6 +281,7 @@ void SM_Evitement::saveContext()
     internals()->evit_memo_vitesse_avance   = Application.m_asservissement.vitesse_avance_max;
     internals()->evit_memo_vitesse_angle    = Application.m_asservissement.vitesse_rotation_max;
     internals()->evit_memo_force_obstacle   = internals()->evit_force_obstacle;
+    internals()->evit_memo_choix_strategie  = internals()->evit_choix_strategie;
 }
 
 void SM_Evitement::restoreContext()
@@ -289,4 +290,6 @@ void SM_Evitement::restoreContext()
     Application.m_asservissement.setIndiceSportivite(internals()->evit_memo_idx_sportiv);
     Application.m_asservissement.CommandeVitesseMouvement(internals()->evit_memo_vitesse_avance, internals()->evit_memo_vitesse_angle);
     internals()->evit_force_obstacle = internals()->evit_memo_force_obstacle;
+    internals()->evit_choix_strategie = internals()->evit_memo_choix_strategie;
+
 }
