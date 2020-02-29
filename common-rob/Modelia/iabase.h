@@ -48,10 +48,10 @@ public:
     void stepAllStateMachines();
     void stopAllStateMachines();
     void stopAllOthersStateMachines(SM_StateMachineBase *sm_to_keep_alive);
-    int getSMCOunt();
     void activeMainMission(SM_StateMachineBase *mission);
     bool isOneMainMissionActive();
     SM_StateMachineBase *activeNextPertinentMainMission(tAlgoNextPertinentMission algo);
+    void resetAllSMPriority(unsigned char priority = 0xFF);
 
     unsigned short getScore();
 

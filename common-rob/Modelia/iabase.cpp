@@ -155,3 +155,14 @@ bool IABase::isMatchTermine()
 {
     return m_sm_main.isMatchTermine();
 }
+
+
+//___________________________________________________________________________
+void IABase::resetAllSMPriority(unsigned char priority)
+{
+    for (int i=0; i<m_state_machine_count; i++) {
+        if (m_sm_liste[i]){
+            m_sm_liste[i]->setPrioriteExecution(priority);
+        }
+    }
+}
