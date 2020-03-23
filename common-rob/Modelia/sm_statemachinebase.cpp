@@ -117,6 +117,7 @@ bool SM_StateMachineBase::isActive()
 // ________________________________________________
 void SM_StateMachineBase::gotoState(unsigned short next_state)
 {
+    if (m_state != m_next_state) return; // prend en compte le cas d'une transition qui a déjà demandé le changement d'état. Dans ce cas, lui laisse la priorité et ignore cet autre demande de changement d'état. Du coup, celle qui est écrite en première est la plus prioritaire.
     m_old_state = m_state;
     m_next_state = next_state;
     m_timeout = 0;
@@ -124,6 +125,7 @@ void SM_StateMachineBase::gotoState(unsigned short next_state)
 // ________________________________________________
 void SM_StateMachineBase::gotoStateAfter(unsigned short next_state, long timeout)
 {
+    if (timeout == NO_TIMEOUT) return;  // pas de gestion de timeout dans ce cas.
     m_timeout += (inputs()->TE_Modele * 1000);
     if (m_timeout>timeout) {
         gotoState(next_state);
@@ -132,12 +134,10 @@ void SM_StateMachineBase::gotoStateAfter(unsigned short next_state, long timeout
 // ________________________________________________
 void SM_StateMachineBase::gotoStateIfTrue(unsigned short next_state, bool condition, long timeout)
 {
-    m_timeout += (inputs()->TE_Modele * 1000);
-    if (condition ||
-        (timeout!=NO_TIMEOUT && m_timeout>timeout))
-    {
+    if (condition) {
         gotoState(next_state);
     }
+    gotoStateAfter(next_state, timeout);
 }
 // ________________________________________________
 void SM_StateMachineBase::gotoStateIfConvergence(unsigned short next_state, long timeout)
