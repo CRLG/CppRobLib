@@ -46,6 +46,7 @@ void SM_Main::step()
         }
         // Couleur de l'équipe
         internals()->couleur_equipe = inputs()->dde_couleur_equipe;
+        internals()->inverse_consignes_XYTeta = (internals()->couleur_equipe==SM_DatasInterface::EQUIPE_COULEUR_2);
         // Autotests
         if (inputs()->dde_test_actionneurs) {
             m_ia ->m_sm_autotest.start();
