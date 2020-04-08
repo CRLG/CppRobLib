@@ -29,6 +29,7 @@ public:
     virtual void interruptForEvitement();
     virtual unsigned short getScore();
     virtual unsigned short getScoreMax();
+    virtual void setScoreMax(unsigned short max_score);
     virtual unsigned char getPrioriteExecution();
     void setPrioriteExecution(unsigned char priorite);
     virtual bool isEnabled();

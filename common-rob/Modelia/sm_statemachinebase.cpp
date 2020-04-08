@@ -98,6 +98,12 @@ unsigned short SM_StateMachineBase::getScoreMax()
     return m_max_score;
 }
 // ________________________________________________
+void SM_StateMachineBase::setScoreMax(unsigned short max_score)
+{
+    m_max_score = max_score;
+}
+
+// ________________________________________________
 unsigned char SM_StateMachineBase::getPrioriteExecution()
 {
     return m_priorite_execution;
