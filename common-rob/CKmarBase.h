@@ -55,6 +55,8 @@ public:
         KMAR_STATUS_OK = 0,
     }tKmarStatus;
 
+    static const int NO_MOUVEMENT = 0;
+
     virtual bool setAxisPosition(int axis, int pos, int speed=-1)=0;
     virtual bool setAxisSpeed(int axis, int speed)=0;
     virtual int getAxisCount()=0;
@@ -70,15 +72,17 @@ public:
     virtual bool autotest();
     virtual void arm();
     virtual void disarm();
-    virtual bool isMoving();
+    virtual bool isMoveInProgress();
     virtual void setSpeedFactor(float factor);
+    virtual int getNumMouvementInProgress();
 
     virtual void stop();
     virtual void compute();
 
     float m_speed_factor;
 
-    CKmarMouvement              *m_mouvement_en_cours;
+    CKmarMouvement *m_mouvement_en_cours;
+    int             m_num_mouvement_en_cours;
 };
 
 #endif // CKMARBASE_H

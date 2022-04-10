@@ -94,7 +94,8 @@ bool CKmarMouvement::onExit()
 // ===========================================================
 CKmarBase::CKmarBase() :
     m_speed_factor(1.0),
-    m_mouvement_en_cours(nullptr)
+    m_mouvement_en_cours(nullptr),
+    m_num_mouvement_en_cours(NO_MOUVEMENT)
 {
 }
 
@@ -125,7 +126,7 @@ bool CKmarBase::autotest()
 // __________________________________________________
 void CKmarBase::arm()
 {
-    for (unsigned int i=0; i<getAxisCount(); i++) {
+    for (int i=0; i<getAxisCount(); i++) {
         arm(i);
     }
 }
@@ -133,7 +134,7 @@ void CKmarBase::arm()
 // __________________________________________________
 void CKmarBase::disarm()
 {
-    for (unsigned int i=0; i<getAxisCount(); i++) {
+    for (int i=0; i<getAxisCount(); i++) {
         disarm(i);
     }
 }
@@ -141,10 +142,10 @@ void CKmarBase::disarm()
 // __________________________________________________
 // Renvoie vrai si au moin un des axes est en mouvement
 // Renvoie faux si tous les axes ont convergés
-bool CKmarBase::isMoving()
+bool CKmarBase::isMoveInProgress()
 {
     bool moving = false;
-    for (unsigned int i=0; i<getAxisCount(); i++) {
+    for (int i=0; i<getAxisCount(); i++) {
         moving |= isMoving(i);
     }
     return moving;
@@ -159,10 +160,18 @@ void CKmarBase::setSpeedFactor(float factor)
     m_speed_factor = factor;
 }
 
+// __________________________________________________
+int CKmarBase::getNumMouvementInProgress()
+{
+    return m_num_mouvement_en_cours;
+}
+
+// __________________________________________________
 void CKmarBase::stop()
 {
     if (m_mouvement_en_cours) m_mouvement_en_cours->stop();
     m_mouvement_en_cours = nullptr;
+    m_num_mouvement_en_cours = NO_MOUVEMENT;
     disarm();
 }
 
@@ -171,6 +180,9 @@ void CKmarBase::compute()
 {
     if (m_mouvement_en_cours) {
         m_mouvement_en_cours->step();
-        if (m_mouvement_en_cours->isFinished()) m_mouvement_en_cours = nullptr;
+        if (m_mouvement_en_cours->isFinished()) {
+            m_mouvement_en_cours = nullptr;
+            m_num_mouvement_en_cours = NO_MOUVEMENT;
+        }
     }
 }
