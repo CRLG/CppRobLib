@@ -80,6 +80,10 @@ public:
     virtual void emergencyStop();
     virtual void compute();
 
+    virtual void catchObject()=0;
+    virtual void releaseObject()=0;
+    virtual bool isObjectCatched()=0;
+
     float m_speed_factor;
 
     CKmarMouvement *m_mouvement_en_cours;
