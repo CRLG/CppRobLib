@@ -167,7 +167,22 @@ int CKmarBase::getNumMouvementInProgress()
 }
 
 // __________________________________________________
+// Pour arrêter le bras en position, on donne à chaque axe
+// la consigne de position courante
 void CKmarBase::stop()
+{
+    if (m_mouvement_en_cours) m_mouvement_en_cours->stop();
+    m_mouvement_en_cours = nullptr;
+    m_num_mouvement_en_cours = NO_MOUVEMENT;
+    // Redonne à chaque axe sa position lue
+    for (int i=0; i<getAxisCount(); i++) {
+        setAxisPosition(i, getPosition(i));
+    }
+}
+
+// __________________________________________________
+// Arrêt le mouvement en cours et désarme chaque axe
+void CKmarBase::emergencyStop()
 {
     if (m_mouvement_en_cours) m_mouvement_en_cours->stop();
     m_mouvement_en_cours = nullptr;

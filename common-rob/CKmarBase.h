@@ -77,6 +77,7 @@ public:
     virtual int getNumMouvementInProgress();
 
     virtual void stop();
+    virtual void emergencyStop();
     virtual void compute();
 
     float m_speed_factor;
