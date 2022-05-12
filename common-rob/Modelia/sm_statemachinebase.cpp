@@ -109,9 +109,11 @@ unsigned char SM_StateMachineBase::getPrioriteExecution()
     return m_priorite_execution;
 }
 // ________________________________________________
+// Autorise la SM et lui fixe sa priorité d'exécution
 void SM_StateMachineBase::setPrioriteExecution(unsigned char priorite)
 {
     m_priorite_execution = priorite;
+    m_enabled = true;
 }
 
 // ________________________________________________

@@ -52,6 +52,7 @@ public:
     bool isOneMainMissionActive();
     SM_StateMachineBase *activeNextPertinentMainMission(tAlgoNextPertinentMission algo);
     void resetAllSMPriority(unsigned char priority = 0xFF);
+    void disableAllSM();
 
     unsigned short getScore();
 

@@ -166,3 +166,13 @@ void IABase::resetAllSMPriority(unsigned char priority)
         }
     }
 }
+
+//___________________________________________________________________________
+void IABase::disableAllSM()
+{
+    for (int i=0; i<m_state_machine_count; i++) {
+        if (m_sm_liste[i]){
+            m_sm_liste[i]->setEnabled(false);
+        }
+    }
+}
