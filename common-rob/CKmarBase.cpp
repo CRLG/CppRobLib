@@ -152,6 +152,14 @@ bool CKmarBase::isMoveInProgress()
 }
 
 // __________________________________________________
+// Renvoie vrai si le KMAR n'exécute aucun mouvement (= si le mouvement est terminé = si aucune machine d'état de mouvement n'est en cours d'exécution)
+// Renvoie faux si un mouvement est en train d'être exécuté
+bool CKmarBase::isFinished()
+{
+    return (m_mouvement_en_cours == nullptr);
+}
+
+// __________________________________________________
 void CKmarBase::setSpeedFactor(float factor)
 {
     if (factor < 0) return;

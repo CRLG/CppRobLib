@@ -73,6 +73,7 @@ public:
     virtual void arm();
     virtual void disarm();
     virtual bool isMoveInProgress();
+    virtual bool isFinished();
     virtual void setSpeedFactor(float factor);
     virtual int getNumMouvementInProgress();
 
