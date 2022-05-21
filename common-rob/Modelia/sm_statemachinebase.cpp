@@ -166,6 +166,12 @@ void SM_StateMachineBase::gotoStateIfConvergenceRack(unsigned short next_state, 
 }
 
 // ________________________________________________
+void SM_StateMachineBase::gotoStateIfConvergenceKmar(unsigned short next_state, long timeout)
+{
+    gotoStateIfTrue(next_state, m_ia->m_inputs_interface.ConvergenceKmar, timeout);
+}
+
+// ________________________________________________
 bool SM_StateMachineBase::onEntry()
 {
     bool result = (m_state != m_old_state);

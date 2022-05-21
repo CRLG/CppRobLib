@@ -49,6 +49,7 @@ public:
     void gotoStateIfConvergence(unsigned short next_state, long timeout=-1);
     void gotoStateIfConvergenceRapide(unsigned short next_state, long timeout=-1);
     void gotoStateIfConvergenceRack(unsigned short next_state, long timeout=-1);
+    void gotoStateIfConvergenceKmar(unsigned short next_state, long timeout=-1);
 
     // Méthodes d'accès simplifiées
     SM_DatasInterface       *internals();
