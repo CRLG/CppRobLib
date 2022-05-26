@@ -10,6 +10,7 @@ Message_COMMANDE_EXPERIENCE::Message_COMMANDE_EXPERIENCE()
 {
     m_id = 0x39;
     m_dlc = 2;
+    ExperienceCmd = EXPERIENCE_CMD_NO_ACTION;
 }
 
 // ____________________________________________________________
