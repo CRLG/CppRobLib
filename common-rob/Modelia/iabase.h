@@ -43,6 +43,8 @@ public:
     // API
     virtual void step() = 0;
     virtual void init() = 0;
+    virtual void match_started();   // Evènement pour indiquer que l
+    virtual void match_finished();
     bool isMatchEnCours();
     bool isMatchTermine();
     void stepAllStateMachines();

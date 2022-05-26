@@ -63,12 +63,14 @@ void SM_Main::step()
     case MATCH_EN_COURS :
         if (onEntry()) {
             m_ia->m_sm_sequenceur.start();
+            m_ia->match_started();
         }
         internals()->TempsMatch += inputs()->TE_Modele;
         gotoStateIfTrue(FIN_MATCH, internals()->TempsMatch > DUREE_MATCH);
 
         if (onExit()) {
             m_ia->stopAllOthersStateMachines(this);
+            m_ia->match_finished();
         }
         break;
     // ___________________________________

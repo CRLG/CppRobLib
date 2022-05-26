@@ -25,6 +25,19 @@ void IABase::setDebugger(SM_DebugInterface* sm_debuger)
 }
 
 // ________________________________________________
+// Comportement par défaut : ne rien faire.
+// Les classes héritées peuvent réimplémenter cette classe si besoin
+// Elle informe que le matche est commencé (que la tirette vient d'être tirée)
+void IABase::match_started()
+{
+}
+
+// ________________________________________________
+void IABase::match_finished()
+{
+}
+
+// ________________________________________________
 void IABase::stopAllStateMachines()
 {
     for (int i=0; i<m_state_machine_count; i++) {
