@@ -56,3 +56,8 @@ bool CCapteursBase::getAscenseurButeeBasse()
     return false;
 }
 
+float CCapteursBase::getCapteurPressionKmar()
+{
+    return 1.25f;
+}
+

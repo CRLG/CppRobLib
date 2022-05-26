@@ -32,6 +32,8 @@ public :
 
     virtual bool getAscenseurButeeHaute();
     virtual bool getAscenseurButeeBasse();
+
+    virtual float getCapteurPressionKmar();
 };
 #endif
 
