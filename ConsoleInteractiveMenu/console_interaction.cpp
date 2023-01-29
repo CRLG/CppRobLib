@@ -318,7 +318,9 @@ void ConsoleInteraction::declare_action_int(const char msg[], ConsoleInteraction
 void ConsoleInteraction::goto_page(funcPtrDisplay menu)
 {
     clear_screen();
-    if (menu) ((*this).*menu)();
+    if (menu)               ((*this).*menu)();
+     // tente d'afficher la page de démarrage
+    else if (m_start_page)  ((*this).*m_start_page)();
     else {
         _printf("Page is not defined !\n\r");
     }
