@@ -62,12 +62,12 @@ bool ConsoleInteraction::receive_str(char str[])
     // Cas de la touche ESCAPE : revient au menu de démarrage
     if ( (str[0] == m_start_page_on_char) && (m_start_page_on_char != 0)) {
         goto_page(m_start_page);
-        status = true;
+        return true;  // changement de page => ne traite pas les autres actions possibles sur la page en cours
     }
     // Cas "tabulation" -> ré-affiche le menu
     if ( (str[0] == m_restart_current_page_on_char) && (m_restart_current_page_on_char!=0)) {
         goto_page(m_current_page.display_page);
-        status = true;
+        return true;    // changement de page => ne traite pas les autres actions possibles sur la page en cours
     }
     // Cas d'un menu action qui attend une string
     if (m_current_page.actionFuncString) {
@@ -91,7 +91,10 @@ bool ConsoleInteraction::receive_str(char str[])
     if (!status) {
         for (int i=0; i<m_current_page.item_nb; i++) {
             if (str[0] == m_current_page.carToPageOrAction[i].car) {
-                if (m_current_page.carToPageOrAction[i].page)      goto_page(m_current_page.carToPageOrAction[i].page);               // traite les touches qui changent de page
+                if (m_current_page.carToPageOrAction[i].page)      {
+                    goto_page(m_current_page.carToPageOrAction[i].page);  // traite les touches qui changent de page
+                    return true;  // changement de page => ne traite pas les autres actions possibles sur la page en cours
+                }
                 if (m_current_page.carToPageOrAction[i].action)    status = ((*this).*m_current_page.carToPageOrAction[i].action)();  // traite les touches qui déclenchent une action immédiate
                 display_prompt();
                 return true;
