@@ -11,7 +11,7 @@
 Message_ETAT_ASSERVISSEMENT::Message_ETAT_ASSERVISSEMENT()
 {
     m_id = 0x39;
-    m_dlc = 11;
+    m_dlc = 13;
 }
 
 // ____________________________________________________________
@@ -38,6 +38,7 @@ void Message_ETAT_ASSERVISSEMENT::decode(const unsigned char *buff_data)
     unsigned char old_ModeAsservissement = ModeAsservissement;
     float old_cde_moteur_D = cde_moteur_D;
     float old_cde_moteur_G = cde_moteur_G;
+    unsigned short old_last_cde_id = last_cde_id;
 #endif // MESSENGER_FULL
 
     X_robot =               CDataEncoderDecoder::decode_int16((unsigned char*)buff_data, 0) / CONV_DISTANCE2MESSAGE;
@@ -49,6 +50,7 @@ void Message_ETAT_ASSERVISSEMENT::decode(const unsigned char *buff_data)
     ModeAsservissement =    CDataEncoderDecoder::decode_int8((unsigned char*)buff_data, 6);
     cde_moteur_D =          CDataEncoderDecoder::decode_int16((unsigned char*)buff_data, 7) / CONV_CDEMOTEUR2MESSAGE;
     cde_moteur_G =          CDataEncoderDecoder::decode_int16((unsigned char*)buff_data, 9) / CONV_CDEMOTEUR2MESSAGE;
+    last_cde_id =           CDataEncoderDecoder::decode_uint16((unsigned char*)buff_data, 11);
 
 #ifdef MESSENGER_FULL
     if (m_messenger_interface) {
@@ -99,6 +101,11 @@ void Message_ETAT_ASSERVISSEMENT::decode(const unsigned char *buff_data)
         sprintf(val_str, "%f", cde_moteur_G);
         m_messenger_interface->dataUpdated(this, name, val_str);
         if (cde_moteur_G != old_cde_moteur_G) m_messenger_interface->dataChanged(this, name, val_str);
+
+        strcpy(name, "last_cde_id");
+        sprintf(val_str, "%d", last_cde_id);
+        m_messenger_interface->dataUpdated(this, name, val_str);
+        if (last_cde_id != old_last_cde_id) m_messenger_interface->dataChanged(this, name, val_str);
     }
 #endif // MESSENGER_FULL
     m_updated = true;
@@ -121,6 +128,7 @@ void Message_ETAT_ASSERVISSEMENT::encode(unsigned char *buff_data)
     CDataEncoderDecoder::encode_int8(buff_data, 6, ModeAsservissement);
     CDataEncoderDecoder::encode_int16(buff_data, 7, cde_moteur_D*CONV_CDEMOTEUR2MESSAGE);
     CDataEncoderDecoder::encode_int16(buff_data, 9, cde_moteur_G*CONV_CDEMOTEUR2MESSAGE);
+    CDataEncoderDecoder::encode_uint16(buff_data, 11, last_cde_id);
 
 #ifdef MESSENGER_FULL
     char name[20];
@@ -161,5 +169,10 @@ void Message_ETAT_ASSERVISSEMENT::encode(unsigned char *buff_data)
     strcpy(name, "cde_moteur_G");
     sprintf(val_str, "%f", cde_moteur_G);
     m_messenger_interface->dataSent(this, name, val_str);
+
+    strcpy(name, "last_cde_id");
+    sprintf(val_str, "%d", last_cde_id);
+    m_messenger_interface->dataSent(this, name, val_str);
+
 #endif // MESSENGER_FULL
 }

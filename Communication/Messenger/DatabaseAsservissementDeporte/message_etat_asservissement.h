@@ -21,6 +21,7 @@ public:
     unsigned char ModeAsservissement;
     float cde_moteur_D;
     float cde_moteur_G;
+    unsigned short last_cde_id;
 };
 
 #endif // _MESSAGES_ETAT_ASSERVISSEMENT_H_
