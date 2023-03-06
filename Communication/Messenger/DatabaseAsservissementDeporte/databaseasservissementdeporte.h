@@ -8,6 +8,7 @@
 #include "message_commande_mouvement_xy_a.h"
 #include "message_commande_mouvement_xy_b.h"
 #include "message_commande_vitesse_mouvement.h"
+#include "message_reinit_position_xy_teta.h"
 
 #include "node_asserdep_grosbot.h"
 #include "node_asserdep_asserv_deporte.h"
@@ -44,6 +45,7 @@ public:
     Message_COMMANDE_MOUVEMENT_XY_A             m_CommandeMouvementXY_A;
     Message_COMMANDE_MOUVEMENT_XY_B             m_CommandeMouvementXY_B;
     Message_COMMANDE_VITESSE_MOUVEMENT          m_CommandeVitesseMouvement;
+    Message_REINIT_POSITION_XY_TETA             m_ReinitPositionXYTeta;
 
     unsigned short m_msg_id;
 private :
