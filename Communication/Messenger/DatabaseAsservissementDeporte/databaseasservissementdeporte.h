@@ -9,6 +9,7 @@
 #include "message_commande_mouvement_xy_b.h"
 #include "message_commande_vitesse_mouvement.h"
 #include "message_reinit_position_xy_teta.h"
+#include "message_commande_indice_sportivite.h"
 
 #include "node_asserdep_grosbot.h"
 #include "node_asserdep_asserv_deporte.h"
@@ -35,7 +36,7 @@ public:
     NodeAsserdepGrosbot         m_node_grosbot;
     NodeAsserdepAsservissement  m_node_asserv_deporte;
 
-    static const unsigned short MESSAGES_COUNT = 8;
+    static const unsigned short MESSAGES_COUNT = 9;
     MessageBase *m_messages_list[MESSAGES_COUNT];
 
     Message_ETAT_ASSERVISSEMENT                 m_EtatAsservissement;
@@ -46,6 +47,7 @@ public:
     Message_COMMANDE_MOUVEMENT_XY_B             m_CommandeMouvementXY_B;
     Message_COMMANDE_VITESSE_MOUVEMENT          m_CommandeVitesseMouvement;
     Message_REINIT_POSITION_XY_TETA             m_ReinitPositionXYTeta;
+    Message_COMMANDE_INDICE_SPORTIVITE          m_CommandeIndiceSportivite;
 
     unsigned short m_msg_id;
 private :

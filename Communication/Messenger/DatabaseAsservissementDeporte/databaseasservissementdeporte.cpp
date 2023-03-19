@@ -73,6 +73,7 @@ void DatabaseAsservissementDeporte::initMessages()
     m_messages_list[i++] = &m_CommandeMouvementXY_B;
     m_messages_list[i++] = &m_CommandeVitesseMouvement;
     m_messages_list[i++] = &m_ReinitPositionXYTeta;
+    m_messages_list[i++] = &m_CommandeIndiceSportivite;
 
     m_p_messages_list = m_messages_list;
 
