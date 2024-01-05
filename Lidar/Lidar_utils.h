@@ -16,8 +16,8 @@ public :
     static const int NBRE_MAX_OBSTACLES = 20;
 
     typedef struct {
-        signed short angle;         // [degres]
-        unsigned char distance;     // [cm]
+        signed short angle;         // [degres signe / -180;+180]
+        unsigned short distance;    // [mm]
     }tLidarObstacle;
 
     typedef tLidarObstacle tLidarObstacles [NBRE_MAX_OBSTACLES];
