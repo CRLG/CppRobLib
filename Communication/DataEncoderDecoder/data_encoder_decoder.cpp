@@ -46,6 +46,22 @@ void CDataEncoderDecoder::encode_uint16(unsigned char *buff, unsigned char posit
     buff[position]      = (data >> 8)&0xFF;
     buff[position+1]    = (data&0xFF);
 }
+
+//___________________________________________________________________________
+ /*!
+   \brief Encode une donnée 24 bits dans le buffer (MSB first)
+   \param buff : le buffer de destination
+   \param position : position de la data dans le buffer
+   \param data : la valeur à encoder
+   \return --
+*/
+void CDataEncoderDecoder::encode_uint24(unsigned char *buff, unsigned char position, unsigned long data)
+{
+    buff[position]      = (data >> 16)&0xFF;
+    buff[position+1]    = (data >> 8)&0xFF;
+    buff[position+2]    = (data&0xFF);
+}
+
 //___________________________________________________________________________
  /*!
    \brief Encode une donnée 32 bits dans le buffer (MSB first)
@@ -61,6 +77,8 @@ void CDataEncoderDecoder::encode_uint32(unsigned char *buff, unsigned char posit
     buff[position+2]    = (data >> 8)&0xFF;
     buff[position+3]    = (data&0xFF);
 }
+
+
 
 //___________________________________________________________________________
  /*!
@@ -88,6 +106,7 @@ void CDataEncoderDecoder::encode_int16(unsigned char *buff, unsigned char positi
     buff[position]      = (data >> 8)&0xFF;
     buff[position+1]    = (data&0xFF);
 }
+
 //___________________________________________________________________________
  /*!
    \brief Encode une donnée 32 bits dans le buffer (MSB first)
@@ -140,6 +159,20 @@ unsigned char CDataEncoderDecoder::decode_uint8(unsigned char *buff, unsigned ch
 unsigned short CDataEncoderDecoder::decode_uint16(unsigned char *buff, unsigned char position)
 {
     return ( ( ((unsigned short)(buff[position+1])) & 0xFF) )  |  ( ( ((unsigned short)(buff[position])) & 0xFF) << 8 ) ;
+}
+
+//___________________________________________________________________________
+ /*!
+   \brief Décode une donnée 24 bits du buffer (MSB first)
+   \param buff : le buffer de destination
+   \param position : position de la data dans le buffer
+   \return la data sur 24 bits
+*/
+unsigned long CDataEncoderDecoder::decode_uint24(unsigned char *buff, unsigned char position)
+{
+    return ( ( ((unsigned long)(buff[position+2])) & 0xFF) )  |
+            ( ( ((unsigned long)(buff[position+1])) & 0xFF) << 8 ) |
+            ( ( ((unsigned long)(buff[position])) & 0xFF) << 16 );
 }
 
 //___________________________________________________________________________
