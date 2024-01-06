@@ -13,7 +13,7 @@ public :
         LIDAR_ERROR
     }eLidarStatus;
 
-    static const int NBRE_MAX_OBSTACLES = 20;
+    static const int NBRE_MAX_OBSTACLES = 10;
 
     typedef struct {
         signed short angle;         // [degres signe / -180;+180]
