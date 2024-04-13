@@ -3,6 +3,7 @@
 */
 #include "CDetectionObstaclesBase.h"
 #include "CGlobale.h"
+#include <math.h>
 
 //___________________________________________________________________________
 /*!
@@ -86,6 +87,23 @@ void CDetectionObstaclesBase::inhibeDetection(bool state)
 void CDetectionObstaclesBase::inhibeDetectionVitesseNulle(bool state)
 {
     m_inhibe_detection_a_l_arret = state;
+}
+
+float CDetectionObstaclesBase::modulo_pi(float angle)
+{
+    float ret=0;
+
+    if (angle > M_PI){
+        ret = angle - (2.0*M_PI);
+    }
+    else if (angle <= (-1.0*M_PI)){
+        ret = angle + (2*M_PI);
+    }
+    else{ // pas de saturation
+        ret = angle;
+    }
+
+    return(ret);
 }
 
 //___________________________________________________________________________
@@ -188,6 +206,36 @@ bool CDetectionObstaclesBase::isObstacle()
     /*if ((((x>100)||(x<-100))||((y>300)||(y<-30)))&&(detection==1))
            detection=0;*/
 
-    return 0;
+    //return 0;
     //return detection;
+}
+
+//___________________________________________________________________________
+bool CDetectionObstaclesBase::isObstacleLIDAR(unsigned short distance, signed short phi)
+{
+
+    bool detection = false;
+    float sens = Application.m_asservissement.getSensDeplacement();
+    // TODO : à vérifier dans l'asserv pour le sens car l'info n'est pas "0" lorsque le robot est à l'arrêt
+
+    // Version trigo
+    if ((phi<90) && (phi>-90))
+    {
+        if((sens>0) && (distance>0) && (fabs(phi)<asin((15.+15.)/distance)))
+            detection=true;
+    }
+
+    if(((phi>90)&&(phi<=180))||((phi<-90)&&(phi>=-180)))
+    {
+            if((sens<0) && (distance>0) && (fabs(phi)<asin((15.+15.)/distance)))
+                detection=true;
+    }
+
+    return detection;
+
+
+       //à réactiver si on veut détecter à l'arrêt
+       /*if (sens==0)
+           ((m_telemetre_AVD<=seuilDistance)||(m_telemetre_AVG<=seuilDistance)||(m_telemetre_ARD<=seuilDistance)||(m_telemetre_ARG<=seuilDistance))? detection=1:detection=0;
+       //on retire les alertes si détection trop proche de la bordure*/
 }

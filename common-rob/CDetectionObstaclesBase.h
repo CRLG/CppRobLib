@@ -17,6 +17,7 @@ public :
     virtual void setSeuilDetectionObstacle(float seuil_cm);
 
     virtual bool isObstacle();
+    virtual bool isObstacleLIDAR(unsigned short distance, signed short phi);
     virtual bool isObstacleAVG();
     virtual bool isObstacleAVD();
     virtual bool isObstacleARG();
@@ -35,6 +36,8 @@ public :
     // Inhibe/Autorise la détection d'obstacle lorsque le robot ne bouge pas
     virtual void inhibeDetectionVitesseNulle(bool state);
 
+    static float modulo_pi(float angle);
+
 protected :
     float m_seuil_detection_obstacle;   // [cm]
     bool m_inhibe_detection_AVG;
@@ -42,7 +45,7 @@ protected :
     bool m_inhibe_detection_ARG;
     bool m_inhibe_detection_ARD;
 
-    bool m_inhibe_detection_a_l_arret;
+    bool m_inhibe_detection_a_l_arret;    
 };
 #endif
 
