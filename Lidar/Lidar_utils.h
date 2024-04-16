@@ -14,6 +14,7 @@ public :
     }eLidarStatus;
 
     static const int NBRE_MAX_OBSTACLES = 10;
+    static const int NO_OBSTACLE = 0xFFFF;    // valeur speciale dans la structure pour indiquer qu'il n'y a pas d'obstacle (meme valeur pour l'angle et la distance)
 
     typedef struct {
         signed short angle;         // [degres signe / -180;+180]
