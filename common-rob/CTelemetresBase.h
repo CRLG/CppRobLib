@@ -16,6 +16,8 @@ public :
     virtual float getDistanceAVD() = 0;
     virtual float getDistanceARG() = 0;
     virtual float getDistanceARD() = 0;
+    virtual float getDistanceARGCentre() = 0;
+    virtual float getDistanceARDCentre() = 0;
 
 };
 #endif

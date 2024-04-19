@@ -22,6 +22,8 @@ public :
     virtual bool isObstacleAVD();
     virtual bool isObstacleARG();
     virtual bool isObstacleARD();
+    virtual bool isObstacleARGCentre();
+    virtual bool isObstacleARDCentre();
     virtual bool isObstacleAV();
     virtual bool isObstacleAR();
 
@@ -29,6 +31,8 @@ public :
     virtual void inhibeDetectionAVD(bool state);
     virtual void inhibeDetectionARG(bool state);
     virtual void inhibeDetectionARD(bool state);
+    virtual void inhibeDetectionARGCentre(bool state);
+    virtual void inhibeDetectionARDCentre(bool state);
     virtual void inhibeDetectionAV(bool state);
     virtual void inhibeDetectionAR(bool state);
     virtual void inhibeDetection(bool state);
@@ -44,6 +48,8 @@ protected :
     bool m_inhibe_detection_AVD;
     bool m_inhibe_detection_ARG;
     bool m_inhibe_detection_ARD;
+    bool m_inhibe_detection_ARGCentre;
+    bool m_inhibe_detection_ARDCentre;
 
     bool m_inhibe_detection_a_l_arret;    
 };

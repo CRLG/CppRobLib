@@ -64,6 +64,16 @@ void CDetectionObstaclesBase::inhibeDetectionARD(bool state)
     m_inhibe_detection_ARD = state;
 }
 
+void CDetectionObstaclesBase::inhibeDetectionARGCentre(bool state)
+{
+    m_inhibe_detection_ARGCentre = state;
+}
+
+void CDetectionObstaclesBase::inhibeDetectionARDCentre(bool state)
+{
+    m_inhibe_detection_ARDCentre = state;
+}
+
 //___________________________________________________________________________
 void CDetectionObstaclesBase::inhibeDetectionAV(bool state)
 {
@@ -75,6 +85,8 @@ void CDetectionObstaclesBase::inhibeDetectionAR(bool state)
 {
     inhibeDetectionARG(state);
     inhibeDetectionARD(state);
+    inhibeDetectionARGCentre(state);
+    inhibeDetectionARDCentre(state);
 }
 
 void CDetectionObstaclesBase::inhibeDetection(bool state)
@@ -131,6 +143,18 @@ bool CDetectionObstaclesBase::isObstacleARD()
              (Application.m_telemetres.getDistanceARD()<=m_seuil_detection_obstacle) );
 }
 
+bool CDetectionObstaclesBase::isObstacleARGCentre()
+{
+    return ( (m_inhibe_detection_ARGCentre == false) &&
+             (Application.m_telemetres.getDistanceARGCentre()<=m_seuil_detection_obstacle) );
+}
+
+bool CDetectionObstaclesBase::isObstacleARDCentre()
+{
+    return ( (m_inhibe_detection_ARDCentre == false) &&
+             (Application.m_telemetres.getDistanceARDCentre()<=m_seuil_detection_obstacle) );
+}
+
 //___________________________________________________________________________
 bool CDetectionObstaclesBase::isObstacleAV()
 {
@@ -139,7 +163,8 @@ bool CDetectionObstaclesBase::isObstacleAV()
 
 bool CDetectionObstaclesBase::isObstacleAR()
 {
-    return isObstacleARG() || isObstacleARD();
+    return isObstacleARG() || isObstacleARD() ||
+           isObstacleARGCentre() || isObstacleARDCentre();
 }
 
 
