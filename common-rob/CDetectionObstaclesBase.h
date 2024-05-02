@@ -17,7 +17,7 @@ public :
     virtual void setSeuilDetectionObstacle(float seuil_cm);
 
     virtual bool isObstacle();
-    virtual bool isObstacleLIDAR(unsigned short distance, signed short phi);
+    virtual bool isObstacleLIDAR(int distance, float phi, const int seuil_transverse);
     virtual bool isObstacleAVG();
     virtual bool isObstacleAVD();
     virtual bool isObstacleARG();

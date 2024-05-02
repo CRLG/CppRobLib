@@ -103,16 +103,15 @@ void CDetectionObstaclesBase::inhibeDetectionVitesseNulle(bool state)
 
 float CDetectionObstaclesBase::modulo_pi(float angle)
 {
-    float ret=0;
-
-    if (angle > M_PI){
-        ret = angle - (2.0*M_PI);
-    }
-    else if (angle <= (-1.0*M_PI)){
-        ret = angle + (2*M_PI);
-    }
-    else{ // pas de saturation
-        ret = angle;
+    float ret=angle;
+    while((ret>M_PI) || (ret<=-M_PI))
+    {
+        if (ret > M_PI){
+            ret = ret - (2.0*M_PI);
+        }
+        else if (ret <= (-M_PI)){
+            ret = ret + (2*M_PI);
+        }
     }
 
     return(ret);
@@ -236,7 +235,7 @@ bool CDetectionObstaclesBase::isObstacle()
 }
 
 //___________________________________________________________________________
-bool CDetectionObstaclesBase::isObstacleLIDAR(unsigned short distance, signed short phi)
+bool CDetectionObstaclesBase::isObstacleLIDAR(int distance, float phi, const int seuil_transverse)
 {
 
     bool detection = false;
@@ -244,15 +243,21 @@ bool CDetectionObstaclesBase::isObstacleLIDAR(unsigned short distance, signed sh
     // TODO : à vérifier dans l'asserv pour le sens car l'info n'est pas "0" lorsque le robot est à l'arrêt
 
     // Version trigo
-    if ((phi<90) && (phi>-90))
+    if ((phi<(M_PI/2)) && (phi>(-M_PI/2)))
     {
-        if((sens>0) && (distance>0) && (fabs(phi)<asin((15.+15.)/distance)))
+        if((sens>0) && (fabs(sin(phi)*distance)<seuil_transverse))
             detection=true;
     }
 
-    if(((phi>90)&&(phi<=180))||((phi<-90)&&(phi>=-180)))
+    if((phi>(M_PI/2))&&(phi<=M_PI))
     {
-            if((sens<0) && (distance>0) && (fabs(phi)<asin((15.+15.)/distance)))
+            if((sens>0) && (fabs(sin(phi-M_PI)*distance)<seuil_transverse))
+                detection=true;
+    }
+
+    if((phi<(-M_PI/2))&&(phi>=-M_PI))
+    {
+            if((sens>0) && (fabs(sin(phi+M_PI)*distance)<seuil_transverse))
                 detection=true;
     }
 
