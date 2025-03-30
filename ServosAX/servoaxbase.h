@@ -169,11 +169,15 @@ public:
     tAxErr write8bitsRegister(unsigned char id, unsigned char reg_addr, unsigned char value);
     tAxErr write16bitsRegister(unsigned char id, unsigned char reg_addr, unsigned short value);
 
+    //! Communication error statistics
+    unsigned long m_rx_err_count;
+    unsigned long m_tx_err_count;
+
 private:
     //! Create an instruction packet based on useful parameters
-    tAxErr createWriteDataPacket(unsigned char id, unsigned char *parameters, unsigned char size, bool send_packet=true);
+    tAxErr sendWriteDataPacket(unsigned char id, unsigned char *parameters, unsigned char size, bool send_packet=true);
     //! Create a read packet based on request parameters
-    tAxErr createReadDataPacket(unsigned char id, unsigned char start_addr, unsigned char length);
+    tAxErr sendReadDataRequestPacket(unsigned char id, unsigned char start_addr, unsigned char length);
 
     //! Compute checksum from the packet
     unsigned char getChecksum(unsigned char *packet);

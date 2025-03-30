@@ -1,6 +1,8 @@
 #include "servoaxbase.h"
 
 ServoAXBase::ServoAXBase()
+    : m_rx_err_count(0),
+      m_tx_err_count(0)
 {
 }
 
@@ -37,7 +39,7 @@ tAxErr ServoAXBase::setPositionSpeed(unsigned char id, unsigned short position, 
     data[2] = (position>>8);
     data[3] = speed;
     data[4] = (speed>>8);
-    return createWriteDataPacket(id, data, 5);
+    return sendWriteDataPacket(id, data, 5);
 }
 
 // ____________________________________________________________
@@ -144,7 +146,7 @@ tAxErr ServoAXBase::write16bitsRegister(unsigned char id, unsigned char reg_addr
     data[0] = reg_addr;
     data[1] = value;
     data[2] = (value>>8);
-    return createWriteDataPacket(id, data, 3);
+    return sendWriteDataPacket(id, data, 3);
 }
 
 // ____________________________________________________________
@@ -159,13 +161,14 @@ tAxErr ServoAXBase::_read8bitsRegister(unsigned char id, unsigned char reg_addr,
 {
     tAxErr err;
 
-    err = createReadDataPacket(id, reg_addr, 1);
+    err = sendReadDataRequestPacket(id, reg_addr, 1);
     if (err != AX_OK) return err;
 
     err = read(m_packet, 7);
     if (err != AX_OK) return err;
 
-    if (!isPacketValid(m_packet)) return AX_INVALID_PACKET;
+    if (!isPacketValid(m_packet))
+        return AX_INVALID_PACKET;
 
     if (err_status) *err_status = m_packet[4];
     if (value) *value = m_packet[5];
@@ -184,13 +187,15 @@ tAxErr ServoAXBase::_read8bitsRegister(unsigned char id, unsigned char reg_addr,
 tAxErr ServoAXBase::read8bitsRegister(unsigned char id, unsigned char reg_addr, unsigned char *value, unsigned char *err_status)
 {
     tAxErr err;
-    unsigned char try_count=0;
-    while(1)
-    {
+    unsigned char attempt=0;
+
+    do {
         err = _read8bitsRegister(id, reg_addr, value, err_status);
-        if (err == AX_OK) return AX_OK;
-        if (try_count++ >= AX_RETRY_ON_ERROR) return err;
-    }
+        attempt++;
+    }while ( (err != AX_OK) && (attempt < AX_RETRY_ON_ERROR) );
+
+    if (err != AX_OK) m_rx_err_count++;
+    return err;
 }
 
 // ____________________________________________________________
@@ -205,7 +210,7 @@ tAxErr ServoAXBase::_read16bitsRegister(unsigned char id, unsigned char reg_addr
 {
     tAxErr err;
 
-    err = createReadDataPacket(id, reg_addr, 2);
+    err = sendReadDataRequestPacket(id, reg_addr, 2);
     if (err != AX_OK) return err;
 
     err = read(m_packet, 8);
@@ -230,13 +235,15 @@ tAxErr ServoAXBase::_read16bitsRegister(unsigned char id, unsigned char reg_addr
 tAxErr ServoAXBase::read16bitsRegister(unsigned char id, unsigned char reg_addr, unsigned short *value, unsigned char *err_status)
 {
     tAxErr err;
-    unsigned char try_count=0;
-    while(1)
-    {
+    unsigned char attempt=0;
+
+    do {
         err = _read16bitsRegister(id, reg_addr, value, err_status);
-        if (err == AX_OK) return AX_OK;
-        if (try_count++ >= AX_RETRY_ON_ERROR) return err;
-    }
+        attempt++;
+    }while ( (err != AX_OK) && (attempt < AX_RETRY_ON_ERROR) );
+
+    if (err != AX_OK) m_rx_err_count++;
+    return err;
 }
 // ____________________________________________________________
 /*! \brief Write a value in a 8 bits register.
@@ -251,11 +258,11 @@ tAxErr ServoAXBase::write8bitsRegister(unsigned char id, unsigned char reg_addr,
     unsigned char data[2];
     data[0] = reg_addr;
     data[1] = value;
-    return createWriteDataPacket(id, data, 2);
+    return sendWriteDataPacket(id, data, 2);
 }
 
 // ____________________________________________________________
-/*! \brief Create a Write Data packet.
+/*! \brief Create and send a Write Data packet.
  *
  * \param id : the identifer of the servo
  * \param parameters : the array of useful parameters values
@@ -265,7 +272,7 @@ tAxErr ServoAXBase::write8bitsRegister(unsigned char id, unsigned char reg_addr,
  * \remarks : the buffer is supposed to be allocated to receive all data
  *      Instruction Packet : 0XFF 0XFF ID LENGTH INSTRUCTION PARAMETER1 ...PARAMETER_N CHECKSUM
  */
-tAxErr ServoAXBase::createWriteDataPacket(unsigned char id, unsigned char *parameters, unsigned char size, bool send_packet)
+tAxErr ServoAXBase::sendWriteDataPacket(unsigned char id, unsigned char *parameters, unsigned char size, bool send_packet)
 {
     m_packet[0] = 0xFF;
     m_packet[1] = 0xFF;
@@ -292,9 +299,9 @@ tAxErr ServoAXBase::createWriteDataPacket(unsigned char id, unsigned char *param
  * \param length: the number of bytes to read
  * \return error code
  * \remarks :
- *      Read Packet : 0XFF 0XFF ID 0x04 0x02 start_addr length CHECKSUM
+ *      Read Packet : 0xFF 0xFF ID 0x04 0x02 start_addr length CHECKSUM
  */
-tAxErr ServoAXBase::createReadDataPacket(unsigned char id, unsigned char start_addr, unsigned char length)
+tAxErr ServoAXBase::sendReadDataRequestPacket(unsigned char id, unsigned char start_addr, unsigned char length)
 {
     m_packet[0] = 0xFF;
     m_packet[1] = 0xFF;
@@ -305,7 +312,6 @@ tAxErr ServoAXBase::createReadDataPacket(unsigned char id, unsigned char start_a
     m_packet[6] = length;
     m_packet[7] = getChecksum(m_packet);
 
-    flushSerialInput();  // ensure no data is pending in uart input buffer
     return _write(m_packet, 8);
 }
 
@@ -325,6 +331,9 @@ tAxErr ServoAXBase::_write(unsigned char *buff_data, unsigned char size)
     waitTransmitComplete();  // ensure transmission is complete before enable line is reset
     delay_us(1);
     setTxEnable(false);
+    flushSerialInput();      // ensure no data is pending in uart input buffer (in case of a write start a read request)
+
+    if (err != AX_OK) m_tx_err_count++;
     return err;
 }
 
