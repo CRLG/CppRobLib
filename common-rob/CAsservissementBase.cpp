@@ -241,8 +241,10 @@ void CAsservissementBase::Initialisation_PID(void)
 	int_terme_angle = 0;
 	consigne_vitesse_rotation_filt = vitesse_rotation_robot_filt;	// Permet dans le cas d'un blocage de réinitialiser le gradient
 	consigne_vitesse_avance_filt = vitesse_avance_robot_filt;		// Permet dans le cas d'un blocage de réinitialiser le gradient
-	offset_vitesse_avance = 3.2*Ind_perfo + 0.6;					// TODO mettre dans décode.c sur réception de trame
-	offset_vitesse_rotation = 0.3*Ind_perfo + 0.1;					// TODO
+    //offset_vitesse_avance = 3.2*Ind_perfo + 0.6; // pour te=20msec// TODO tenir compte du Te
+    //offset_vitesse_rotation = 0.3*Ind_perfo + 0.1;				// TODO tenir compte du Te
+    offset_vitesse_avance = 0.8*Ind_perfo + 0.15;  // pour te=5msec
+    offset_vitesse_rotation = 0.075*Ind_perfo + 0.025;
 }
 
 //*******************************************************************************************
@@ -375,7 +377,6 @@ else // Asservissement XY_AUTO...
 		}
 	}
 
-	
 if (convergence_conf == 0) // Pas la peine de calculer la commande si on a convergé => Terrain plat
 	{
 	//------------------------------------------------------------------------------------------
