@@ -238,7 +238,7 @@ protected :
 
 private :
     static const int STRING_MAX_SIZE = 64;          // Taille max d'une chaine de caractère
-    static const int MAX_ITEM_NB_PER_PAGE = 20;     // Nombre max d'item dans une page
+    static const int MAX_ITEM_NB_PER_PAGE = 35;     // Nombre max d'item dans une page
 
     typedef struct {
         char car;
