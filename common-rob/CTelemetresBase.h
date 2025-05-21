@@ -1,5 +1,5 @@
 /*! \file CTelemetresBase.h
-    \brief Classe de base qui contient la gestion des 4 LED MBED
+    \brief Classe de base qui contient la gestion des 4 LED CPU
 */
 
 #ifndef _TELEMETRES_BASE_H

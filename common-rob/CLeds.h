@@ -1,5 +1,5 @@
 /*! \file CLeds.h
-    \brief Classe de base qui contient la gestion des 4 LED MBED
+    \brief Classe de base qui contient la gestion des 4 LED CPU
 */
 
 #ifndef _LEDS_H_
