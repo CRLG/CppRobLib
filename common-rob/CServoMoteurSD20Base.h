@@ -9,14 +9,14 @@
 // -----------------------------
 //! Classe de gestion des options d'exécution passees en ligne de commande
 class CServoMoteurSD20Base {
-#define ADRESSE_I2C_SD20 	0xC2
-#define NBRE_SERVOS_SD20	20
-
-#define RELACHE_SERVO_OFF           0xFFFF
-#define BUTEE_SERVO_OFF             0xFFFF
-#define PERIODE_APPEL_TACHE_GESTION 10 // [msec]
-
 public :
+    static const unsigned int  ADRESSE_I2C_SD20 = 0xC2;
+    static const unsigned int  NBRE_SERVOS_SD20	= 20;
+
+    static const unsigned int RELACHE_SERVO_OFF = 0xFFFFFFFF;
+    static const unsigned short BUTEE_SERVO_OFF =0xFFFF;
+    static const unsigned short PERIODE_APPEL_TACHE_GESTION = 20; // [msec]
+
     CServoMoteurSD20Base();
     virtual ~CServoMoteurSD20Base();
 
