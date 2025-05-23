@@ -4,7 +4,7 @@
 SM_StateMachineBase::SM_StateMachineBase()
     : m_ia(nullptr),
       m_main_mission_type(false),
-      m_enabled(true),
+      m_enabled(false),
       m_state(SM_NOT_INITIALIZED),
       m_next_state(SM_NOT_INITIALIZED),
       m_old_state(SM_NOT_INITIALIZED),
