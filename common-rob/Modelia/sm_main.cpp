@@ -43,6 +43,8 @@ void SM_Main::step()
     // ___________________________________
     case ATTENTE_TIRETTE :
         if (onEntry()) {
+            m_ia ->m_sm_autotest.start();
+            inputs()->dde_test_actionneurs = 0;
         }
         // Couleur de l'équipe
         internals()->couleur_equipe = inputs()->dde_couleur_equipe;
