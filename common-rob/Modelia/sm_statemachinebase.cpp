@@ -31,8 +31,18 @@ const char* SM_StateMachineBase::getName()
 // ________________________________________________
 const char* SM_StateMachineBase::stateToName(unsigned short state)
 {
-    (void)state;
-    return "";
+    switch (state) {
+    case SM_NOT_INITIALIZED :   return "SM_NOT_INITIALIZED";
+    case SM_START :             return "SM_START";
+    case SM_WAITING_FOR_START : return "SM_WAITING_FOR_START";
+    case SM_ACTIVE :            return "SM_ACTIVE";
+    case SM_PAUSE :             return "SM_PAUSE";
+    case SM_INTERRUPTED :       return "SM_INTERRUPTED";
+    case SM_STATE_END :         return "SM_STATE_END";
+    // _________________
+    case SM_FIRST_STATE :       return "SM_FIRST_STATE";
+    default :                   return "UNKNOWN_STATE";
+    }
 }
 
 
