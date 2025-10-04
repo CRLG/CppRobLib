@@ -14,8 +14,6 @@ void WS2812UartBase::init()
     tWS2812BPattern *leds = getPatternBuffer();
     if (!leds) return;
 
-    unsigned long toto = RGBColor::BLUE;
-
     for (unsigned int i=0; i<getNumberOfLed(); i++) {
         leds[i].Ton          = 0;
         leds[i].Toff         = 0;
