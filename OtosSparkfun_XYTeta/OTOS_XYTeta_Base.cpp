@@ -30,8 +30,8 @@
 #include "OTOS_XYTeta_Base.h"
 
 OtosXYTetaBase::OtosXYTetaBase()
-    : _linearUnit{kSfeOtosLinearUnitInches}, _angularUnit{kSfeOtosAngularUnitDegrees},
-      _meterToUnit{kMeterToInch}, _radToUnit{kRadianToDegree}
+    : _linearUnit{kSfeOtosLinearUnitCentimeters}, _angularUnit{kSfeOtosAngularUnitDegrees},
+      _meterToUnit{kMeterToCentimeter}, _radToUnit{kRadianToDegree}
 {
     // Nothing to do here!
 }

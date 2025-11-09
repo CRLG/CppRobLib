@@ -55,11 +55,14 @@ typedef struct
 /// @brief Enumerations for linear units used by the OTOS driver
 typedef enum
 {
-    /// @brief Meters
+   /// @brief Meters
     kSfeOtosLinearUnitMeters = 0,
-
-    /// @brief Inches (default)
-    kSfeOtosLinearUnitInches = 1
+    /// @brief Centimeters
+    kSfeOtosLinearUnitCentimeters,
+    /// @brief Millimeters
+    kSfeOtosLinearUnitMillimeters,
+    /// @brief Inches
+    kSfeOtosLinearUnitInches
 } otos_linear_unit_t;
 
 /// @enum otos_angular_unit_t
@@ -459,6 +462,11 @@ class OtosXYTetaBase
     // Conversion factors
     static constexpr float kMeterToInch = 39.37f;
     static constexpr float kInchToMeter = 1.0f / kMeterToInch;
+    static constexpr float kMeterToCentimeter = 100.0f;
+    static constexpr float kCentimeterToMeter = 1.0f / kMeterToCentimeter;
+    static constexpr float kMeterToMillimeter = 1000.0f;
+    static constexpr float kMillimeterToMeter = 1.0f / kMeterToMillimeter;
+
     static constexpr float kRadianToDegree = 180.0f / M_PI;
     static constexpr float kDegreeToRadian = M_PI / 180.0f;
 
