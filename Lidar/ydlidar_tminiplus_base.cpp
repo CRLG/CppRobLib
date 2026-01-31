@@ -176,7 +176,7 @@ float YDLIDAR_TminiPlusBase::dataindex2Angle(tPacket *packet, unsigned short dat
 unsigned int YDLIDAR_TminiPlusBase::dataindex2Distance(tPacket *packet, unsigned short data_index)
 {
     unsigned int __index=3*data_index;
-    float distance = ((unsigned short)(packet->data[__index+2]) << 6) | (packet->data[__index+1]>>2);
+    unsigned int distance = ((unsigned short)(packet->data[__index+2]) << 6) | (packet->data[__index+1]>>2);
     return distance;
 }
 
