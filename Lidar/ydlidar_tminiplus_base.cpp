@@ -1,10 +1,20 @@
 #include "ydlidar_tminiplus_base.h"
 
 YDLIDAR_TminiPlusBase::YDLIDAR_TminiPlusBase()
+	: m_cycles_count(0)
 {
     init_reconstitution();
 }
 
+
+// ____________________________________________________________
+/*! Retourne le nombre de cycles complets reçus
+ *
+ */
+unsigned long YDLIDAR_TminiPlusBase::get_cycles_count()
+{
+	return m_cycles_count;
+}
 
 // ____________________________________________________________
 /*!
@@ -19,6 +29,19 @@ void YDLIDAR_TminiPlusBase::init_reconstitution()
 }
 
 // ____________________________________________________________
+/*! \brief Reconstitue un paquet à partir d'un buffer d'entrée
+ *  \param le buffer de données reçues
+ *  \param la longueur du buffer reçu
+ */
+void YDLIDAR_TminiPlusBase::reconstitution(unsigned char data[], unsigned short len)
+{
+	for (int i=0; i<len; i++) {
+		reconstitution(data[i]);
+	}
+}
+
+
+// ____________________________________________________________
 /*!
  * \brief YDLIDAR_TminiPlus::reconstitution
  * \param data
@@ -29,11 +52,15 @@ void YDLIDAR_TminiPlusBase::reconstitution(unsigned char data)
     // ____________________________
     case RS_HEADER_LSB :
         if (data == 0xAA) m_packet_reconstitution_state++;
-        m_packet_error_count = 0;
+        else m_packet_error_count++;
+        //m_packet_error_count = 0;
         break;
     case RS_HEADER_MSB :
         if (data == 0x55) m_packet_reconstitution_state++;
-        else m_packet_reconstitution_state = RS_HEADER_LSB;
+        else {
+        	m_packet_reconstitution_state = RS_HEADER_LSB;
+        	m_packet_error_count++;
+        }
         break;
     // ____________________________
     case RS_CT :
@@ -83,6 +110,7 @@ void YDLIDAR_TminiPlusBase::reconstitution(unsigned char data)
 
                 if (isLastPacketOfCycle(&m_packet))  {
                     new_cycle();
+                    m_cycles_count++;
                     m_data_count_in_cycle = 0;
                 }
             }
@@ -252,6 +280,16 @@ void YDLIDAR_TminiPlusBase::stop_measures()
 
 // ____________________________________________________________
 /*!
+ * \brief YDLIDAR_TminiPlusBase::stop_measures
+ */
+
+void YDLIDAR_TminiPlusBase::restart()
+{
+    send_command(0x40);
+    init_reconstitution();  // recommence le cycle courant
+}
+// ____________________________________________________________
+/*!
  * \brief YDLIDAR_TminiPlusBase::scan_M1
  */
 void YDLIDAR_TminiPlusBase::scan_M1()
@@ -281,4 +319,79 @@ void YDLIDAR_TminiPlusBase::send_command(unsigned char cmd)
     _buff[0] = 0xA5;
     _buff[1]= cmd;
     write_serial(_buff, 2);
+}
+
+
+// ____________________________________________________________
+//! TODO : continuer ici
+// Le message reçu est composé :
+//		- 7 octets pour le header
+//		- 20 octets de données utiles
+bool YDLIDAR_TminiPlusBase::read_device_information(tDeviceInformation *device_info)
+{
+	const unsigned char MSG_LEN = 27;
+	const unsigned char header[7] = { 0xA5, 0x5A, 0x14, 0x00, 0x00, 0x00, 0x04};
+	char _buff[MSG_LEN];
+
+	send_command(0x90);
+	//delay_ms(20); // laisse le temps de répondre
+	if (!read_serial(_buff, MSG_LEN)) return false;
+
+	// Vérifie que le header est bien celui attendu pour cette réponse
+	for (int i=0; i<7; i++) {
+		if (_buff[i] != header[i]) return false;
+	}
+
+	// interprète les 20 octets de données utiles
+	device_info->model_number = _buff[7];
+	device_info->firmware_version_maj = _buff[8];
+	device_info->firmware_version_min = _buff[9];
+	device_info->hardware_version = _buff[10];
+	for (int i=0; i<16; i++) device_info->serial_number[i] = _buff[i+11];
+	return true;
+}
+
+// ____________________________________________________________
+//! TODO : continuer ici
+bool YDLIDAR_TminiPlusBase::read_status(tHealthStatus *status)
+{
+	const unsigned char MSG_LEN = 10;
+	const unsigned char header[7] = { 0xA5, 0x5A, 0x03, 0x00, 0x00, 0x00, 0x06};
+	char _buff[MSG_LEN];
+
+	send_command(0x92);
+	//delay_ms(20); // laisse le temps de répondre
+	if (!read_serial(_buff, MSG_LEN)) return false;
+
+	// Vérifie que le header est bien celui attendu pour cette réponse
+	for (int i=0; i<7; i++) {
+		if (_buff[i] != header[i]) return false;
+	}
+
+	// interprète les 20 octets de données utiles
+	status->health_status = _buff[7];
+	status->error_code = (unsigned short)_buff[8] | _buff[9];
+	return true;
+}
+
+// ____________________________________________________________
+//! TODO : continuer ici
+bool YDLIDAR_TminiPlusBase::read_scan_frequency(tScanFrequency *frequency)
+{
+	const unsigned char MSG_LEN = 10;
+	const unsigned char header[7] = { 0xA5, 0x5A, 0x04, 0x00, 0x00, 0x00, 0x04};
+	char _buff[MSG_LEN];
+
+	send_command(0x0D);
+	//delay_ms(20); // laisse le temps de répondre
+	if (!read_serial(_buff, MSG_LEN)) return false;
+
+	// Vérifie que le header est bien celui attendu pour cette réponse
+	for (int i=0; i<7; i++) {
+		if (_buff[i] != header[i]) return false;
+	}
+
+	// interprète les 20 octets de données utiles
+	frequency->scan_frequency = ((unsigned long)_buff[10] << 24) | ((unsigned long)_buff[9] << 16) | ((unsigned long)_buff[8] << 8) | ((unsigned long)_buff[7]);
+	return true;
 }
