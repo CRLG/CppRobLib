@@ -5,6 +5,8 @@
 #ifndef _LIDAR_UTILS_H_
 #define _LIDAR_UTILS_H_
 
+class CLidarData;
+
 class LidarUtils {
 public :
     typedef enum {
@@ -25,6 +27,8 @@ public :
     typedef tLidarObstacle tLidarObstacles [NBRE_MAX_OBSTACLES];
 
     static void copy_tab_obstacles(tLidarObstacle *src, tLidarObstacle *dest, int size=NBRE_MAX_OBSTACLES);
+    static int lidar_data_to_obstacles(const CLidarData *in_data, tLidarObstacles out_obstacles);
+
 };
 
 #endif
