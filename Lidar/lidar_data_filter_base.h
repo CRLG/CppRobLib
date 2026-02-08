@@ -6,11 +6,11 @@ class CLidarData;
 class CLidarDataFilterBase
 {
 public:
-    CLidarDataFilterBase();
+    CLidarDataFilterBase() { }
     virtual ~CLidarDataFilterBase() { }
 
     virtual void filter(const CLidarData *data_in, CLidarData *data_out) = 0;  // virtuelle pure : à implémenter dans les classes dérivées pour implémenter le filtre
-    const int POINT_IGNORED = 99999999;
+    static const int POINT_IGNORED = 99999999;
 };
 
 #endif // _LIDAR_DATA_FILTER_BASE_H_
