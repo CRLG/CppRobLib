@@ -41,7 +41,6 @@ void SM_Evitement::step()
     case EVITEMENT_INIT :
         if (onEntry()) {
             internals()->evitementEnCours=true;
-            Application.m_leds.setPattern(PATTERN_K2000, 1000);
             saveContext();
             internals()->evit_sens_avant_detection = Application.m_asservissement.getSensDeplacement();
             internals()->evit_force_obstacle = true;
