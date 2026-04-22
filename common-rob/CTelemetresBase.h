@@ -19,6 +19,8 @@ public :
     virtual float getDistanceARGCentre() = 0;
     virtual float getDistanceARDCentre() = 0;
 
+    virtual bool init() = 0;
+    virtual void periodicTask() = 0;
 };
 #endif
 
