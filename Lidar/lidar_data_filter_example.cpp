@@ -1,5 +1,7 @@
 #include "lidar_data_filter_example.h"
 #include "lidar_data.h"
+#include "Lidar_utils.h"
+
 
 CLidarDataFilterExample::CLidarDataFilterExample()
 {
@@ -18,12 +20,12 @@ void CLidarDataFilterExample::filter(const CLidarData *data_in, CLidarData *data
 
         // 1. Elimine tous les points supérieurs à une certaine distance
         if (data_in->m_dist_measures[i] > m_data_seuil_distance_suppression) {
-            data_out->m_dist_measures[i] = POINT_IGNORED;
+            data_out->m_dist_measures[i] = LidarUtils::NO_OBSTACLE;
         }
 
         // 2. Elimine tous les points très très proche (bruit)
         if (data_in->m_dist_measures[i] < m_data_seuil_distance_bruit_suppression) {
-            data_out->m_dist_measures[i] = POINT_IGNORED;
+            data_out->m_dist_measures[i] = LidarUtils::NO_OBSTACLE;
         }
     }
 }
