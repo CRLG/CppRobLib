@@ -74,7 +74,8 @@ public :
     static const unsigned long RED         = (0xFF0000);
     static const unsigned long GREEN       = (0x00FF00);
     static const unsigned long BLUE        = (0x0000FF);
-    static const unsigned long PURPLE      = (0x990066);
+    static const unsigned long PINK        = (0x990066);
+    static const unsigned long PURPLE      = (0x663399);
     static const unsigned long YELLOW      = (0xFF9900);
     static const unsigned long WHITE       = (0xFFFFFF);
     static const unsigned long CHARTREUSE  = (0x7FFF00);
