@@ -70,7 +70,13 @@ void YDLIDAR_TminiPlusBase::reconstitution(unsigned char data)
     // ____________________________
     case RS_LS :
         m_packet.packet_len = data;
-        m_packet_reconstitution_state++;
+    	if (m_packet.packet_len <= MAX_DATA_BYTE_PER_PACKET) {  // Vérifie que par corruption de données, on  ne peut pas dépasser la taille du buffer (protection suite à https://github.com/CRLG/GROSBOT_STM32/issues/2)
+    		m_packet_reconstitution_state++;
+    	}
+    	else { // pas la peine d'aller plus loin, risque de débordement de tableau
+        	m_packet_reconstitution_state = RS_HEADER_LSB;
+        	m_packet_error_count++;
+    	}
         break;
     // ____________________________
     case RS_FSA_LSB :
@@ -102,24 +108,31 @@ void YDLIDAR_TminiPlusBase::reconstitution(unsigned char data)
         break;
     // ____________________________
     case RS_DATA_i :
-        m_packet.data[m_sample_data_index++] = data;
-        if (m_sample_data_index >= (3*m_packet.packet_len)) {
-            if ( compute_checksum(&m_packet) == m_packet.checksum ) {
-                m_data_count_in_cycle += m_packet.packet_len;
-                new_packet();
+    	if (m_sample_data_index < MAX_DATA_BYTE_PER_PACKET) {  // Vérifie que par corruption de données, on  ne peut pas dépasser la taille du buffer (protection suite à https://github.com/CRLG/GROSBOT_STM32/issues/2)
+			m_packet.data[m_sample_data_index++] = data;
+			if (m_sample_data_index >= (3*m_packet.packet_len)) {
+				if ( compute_checksum(&m_packet) == m_packet.checksum ) {
+					m_data_count_in_cycle += m_packet.packet_len;
+					new_packet();
 
-                if (isLastPacketOfCycle(&m_packet))  {
-                    new_cycle();
-                    m_cycles_count++;
-                    m_data_count_in_cycle = 0;
-                }
-            }
-            else {
-                m_packet_error_count++;
-                packet_error();
-            }
-            m_packet_reconstitution_state = RS_HEADER_LSB;
-        }
+					if (isLastPacketOfCycle(&m_packet))  {
+						new_cycle();
+						m_cycles_count++;
+						m_data_count_in_cycle = 0;
+					}
+				}
+				else {
+					m_packet_error_count++;
+					packet_error();
+				}
+				m_packet_reconstitution_state = RS_HEADER_LSB;
+			}
+    	} // if (le nombre de données déjà reçues ne dépasse pas la taille du buffer)
+    	else {  // dans ce cas, l'index du tableau dépasse la taille du tableau -> anormal
+			m_packet_error_count++;
+			packet_error();
+			m_packet_reconstitution_state = RS_HEADER_LSB;
+    	}
         break;
     // ____________________________
     default :
