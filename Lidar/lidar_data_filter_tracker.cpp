@@ -16,7 +16,11 @@ CLidarDataFilterTracker::CLidarDataFilterTracker()
     m_d_seuil_filtrage_dist = 150.;
     m_i_seuil_filtrage_angle = 3;
     m_d_seuil_gradient = 150.;
-    m_d_seuil_facteur_forme = 1400.;
+    // Reglement : enveloppe convexe du support de balise entre un cercle de 70 mm de diametre et un
+    // carre de 100 mm de cote (demi-diagonale 70,7 mm). Les courbes enveloppes sont elargies de part
+    // et d'autre : diagonale de 3 cm (R=15 mm) et de 18 cm (R=90 mm).
+    m_d_R_mini = 15.;
+    m_d_R_maxi = 90.;
 }
 
 /*!
@@ -49,6 +53,13 @@ CLidarDataFilterTracker::CLidarDataFilterTracker()
   pour filtrer les gros objet apparents donc normalement proches mais pourtant lointains
   il y a une relation entre taille de l'objet et sa distance (obtenu par apprentissage pour un objet comme le support balise) c'est le facteur de forme;
   si le couple taille/distance s'éloigne trop du facteur de forme, il ne correspond pas à une balise
+  Le facteur de forme est calcule : D = R / tan(theta/2), avec R la demi-diagonale du mat balise et
+  theta sa largeur angulaire apparente. Il est borne des DEUX cotes par les courbes enveloppes
+  m_d_R_mini / m_d_R_maxi : une seule borne laissait passer tout objet plus proche que la courbe,
+  donc un mur vu de loin. La largeur theta est calculee a partir de la resolution angulaire reelle
+  du balayage, et non du nombre d'echantillons : le driver recalcule cette resolution a chaque tour
+  (360 / nombre de points), un facteur de forme exprime en echantillons se decalibre des que la
+  frequence de rotation ou le nombre de points change.
 */
 // _______________________________________________________________
 void CLidarDataFilterTracker::filter(const CLidarData *data_in, CLidarData *data_out)
@@ -56,9 +67,23 @@ void CLidarDataFilterTracker::filter(const CLidarData *data_in, CLidarData *data
     if (!data_in)   return;
     if (!data_out)  return;
 
+    //le balayage de sortie reprend l'entete du balayage d'entree AVANT d'etre rince : sans cela
+    //data_out->m_measures_count reste a sa valeur initiale (zero) et le balayage filtre parait vide
+    //a tous ses consommateurs, alors qu'il contient des objets. Le filtre "example" ne montrait pas
+    //le probleme : il recopie l'integralite du balayage d'entree, entete comprise.
+    data_out->m_timestamp = data_in->m_timestamp;
+    data_out->m_start_angle = data_in->m_start_angle;
+    data_out->m_angle_step_resolution = data_in->m_angle_step_resolution;
+    data_out->m_scan_frequency = data_in->m_scan_frequency;
+    data_out->m_scale_factor = data_in->m_scale_factor;
+    data_out->m_measures_count = (data_in->m_measures_count <= CLidarData::MAX_MEASURES_COUNT) ?
+                                  data_in->m_measures_count : CLidarData::MAX_MEASURES_COUNT;
+
     //on s'assure que les données sont rincées
     for(int i=0;i<data_out->m_measures_count;i++)
         data_out->m_dist_measures[i]=LidarUtils::NO_OBSTACLE;
+
+    m_blobs.clear();
 
     //Variables internes algo    
     //pour gérer le CREC
@@ -192,28 +217,41 @@ void CLidarDataFilterTracker::filter(const CLidarData *data_in, CLidarData *data
                     }
 
 
-                    //vérification du facteur de forme
-                    //f(x)=70.7106781/tan(0.00872665*x)
-                    double facteur_forme=70.7106781/tan(0.00872665*i_COUNT);
-
-                    if((d_moyenne+m_d_dist_offset)<(facteur_forme+m_d_seuil_facteur_forme))
+                    int i_recorded=0;
+                    double dist_recorded=0.;
+                    //qDebug() << "à fusionner "<<toMerge;
+                    if(toMerge)
                     {
+                        i_recorded=abs((i_moyenne+old_angle)/2);
+                        dist_recorded=fabs((d_moyenne+old_dist)/2);
+                    }
+                    else
+                    {
+                        i_recorded=i_moyenne;
+                        dist_recorded=d_moyenne;
+                    }
+                    const double distance_mesuree = dist_recorded + m_d_dist_offset;
 
-                        int i_recorded=0;
-                        double dist_recorded=0.;
-                        //qDebug() << "à fusionner "<<toMerge;
-                        if(toMerge)
-                        {
-                            i_recorded=abs((i_moyenne+old_angle)/2);
-                            dist_recorded=fabs((d_moyenne+old_dist)/2);
-                        }
-                        else
-                        {
-                            i_recorded=i_moyenne;
-                            dist_recorded=d_moyenne;
-                        }
+                    //vérification du facteur de forme : D = R / tan(theta/2), borne des deux cotés
+                    //par les courbes enveloppes. theta est la largeur angulaire réelle du créneau.
+                    const double theta_deg = i_COUNT * data_in->m_angle_step_resolution;
+                    const double demi_theta_rad = 0.5 * theta_deg * M_PI / 180.;
+                    const double tan_demi_theta = tan(demi_theta_rad);
+                    bool forme_douteuse = true;
+                    if (tan_demi_theta > 0.) {
+                        const double distance_mini = m_d_R_mini / tan_demi_theta;
+                        const double distance_maxi = m_d_R_maxi / tan_demi_theta;
+                        forme_douteuse = (distance_mesuree < distance_mini) || (distance_mesuree > distance_maxi);
+                    }
 
-                        data_out->m_dist_measures[i_recorded]=dist_recorded+m_d_dist_offset;
+                    //l'objet est publié dans tous les cas, marqué s'il est douteux : un objet est
+                    //déclassé, jamais supprimé. Seuls les objets retenus alimentent data_out.
+                    m_blobs.append((float)(data_in->m_start_angle + i_recorded*data_in->m_angle_step_resolution),
+                                   (float)distance_mesuree, (float)theta_deg, forme_douteuse);
+
+                    if(!forme_douteuse)
+                    {
+                        data_out->m_dist_measures[i_recorded]=distance_mesuree;
 
                        // data_out->m_dist_measures[i_moyenne]=d_moyenne-m_d_dist_offset;
                         //mémorisation pour filtrage
