@@ -237,10 +237,27 @@ bool CDetectionObstaclesBase::isObstacle()
 //___________________________________________________________________________
 bool CDetectionObstaclesBase::isObstacleLIDAR(int distance, float phi, const int seuil_transverse)
 {
-
-    bool detection = false;
     float sens = Application.m_asservissement.getSensDeplacement();
     // TODO : à vérifier dans l'asserv pour le sens car l'info n'est pas "0" lorsque le robot est à l'arrêt
+    return isObstacleLIDARDansSens(distance, phi, seuil_transverse, sens);
+}
+
+//___________________________________________________________________________
+/*!
+ * \brief Detection lidar dans un couloir de demi-largeur seuil_transverse, dans le sens donne
+ * \param distance distance du point [cm]
+ * \param phi angle du point par rapport a l'axe du robot [rad], dans ]-PI ; PI]
+ * \param seuil_transverse demi-largeur du couloir de detection [cm]
+ * \param sens sens de deplacement de reference : >0 marche avant, <0 marche arriere
+ * \return true si le point est dans le couloir, du cote ou l'on se deplace
+ *
+ * Les points situes devant le robot ne comptent qu'en marche avant, ceux situes derriere qu'en
+ * marche arriere. Auparavant les trois cas testaient sens>0 : en marche avant un objet situe
+ * derriere le robot declenchait l'evitement, et en marche arriere rien n'etait jamais detecte.
+ */
+bool CDetectionObstaclesBase::isObstacleLIDARDansSens(int distance, float phi, const int seuil_transverse, float sens)
+{
+    bool detection = false;
 
     // Version trigo
     if ((phi<(M_PI/2)) && (phi>(-M_PI/2)))
@@ -251,13 +268,13 @@ bool CDetectionObstaclesBase::isObstacleLIDAR(int distance, float phi, const int
 
     if((phi>(M_PI/2))&&(phi<=M_PI))
     {
-            if((sens>0) && (fabs(sin(phi-M_PI)*distance)<seuil_transverse))
+            if((sens<0) && (fabs(sin(phi-M_PI)*distance)<seuil_transverse))
                 detection=true;
     }
 
     if((phi<(-M_PI/2))&&(phi>=-M_PI))
     {
-            if((sens>0) && (fabs(sin(phi+M_PI)*distance)<seuil_transverse))
+            if((sens<0) && (fabs(sin(phi+M_PI)*distance)<seuil_transverse))
                 detection=true;
     }
 

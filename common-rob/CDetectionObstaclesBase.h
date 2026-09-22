@@ -18,6 +18,9 @@ public :
 
     virtual bool isObstacle();
     virtual bool isObstacleLIDAR(int distance, float phi, const int seuil_transverse);
+    // Meme detection, avec le sens de deplacement de reference fourni par l'appelant (+1 avant,
+    // -1 arriere) au lieu de getSensDeplacement(), qui robot arrete ne rend que le signe d'un residu.
+    virtual bool isObstacleLIDARDansSens(int distance, float phi, const int seuil_transverse, float sens);
     virtual bool isObstacleAVG();
     virtual bool isObstacleAVD();
     virtual bool isObstacleARG();
