@@ -54,6 +54,35 @@ bool CTacticalEvaluator::horsTerrain(float x_cm, float y_cm) const
 
 // _____________________________________________________________
 /*!
+ * \brief Demi-ouverture du couloir a la distance D
+ * Meme calcul que dans evaluer() : un objet a moins de cet angle du cap est dans le couloir.
+ */
+float CTacticalEvaluator::angleCritiqueRad(float D_cm) const
+{
+    if (D_cm < 0.1f) return (float)M_PI / 2.f;   // colle au robot : tout le demi-plan gene
+    float rapport = (m_R0_cm + m_R1_cm) / D_cm;
+    if (rapport > 1.f) rapport = 1.f;
+    return asinf(rapport);
+}
+
+// _____________________________________________________________
+/*!
+ * \brief true si la pose reste dans le terrain, marge de bord comprise
+ */
+bool CTacticalEvaluator::poseManoeuvrable(float x_cm, float y_cm) const
+{
+    // La marge est le rayon englobant du robot, et non la marge de bord tactique (m_marge_bord_cm,
+    // qui sert a choisir un cote d'esquive). La question posee ici est physique : le chassis
+    // tiendrait-il a cette pose ? Prendre la marge tactique refuserait toute manoeuvre depuis la
+    // zone de depart, qui est elle-meme adossee a une bordure.
+    return (x_cm >= (m_terrain_x_min_cm + m_R0_cm))
+        && (x_cm <= (m_terrain_x_max_cm - m_R0_cm))
+        && (y_cm >= (m_terrain_y_min_cm + m_R0_cm))
+        && (y_cm <= (m_terrain_y_max_cm - m_R0_cm));
+}
+
+// _____________________________________________________________
+/*!
  * \brief Cote ou s'ecarter : l'oppose de la piste, sauf si le bord du terrain l'interdit
  */
 signed char CTacticalEvaluator::choisirCoteLibre(float x_robot_cm, float y_robot_cm,

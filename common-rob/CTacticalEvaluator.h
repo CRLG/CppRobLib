@@ -59,6 +59,14 @@ public :
 
     const tMenace& menace() const { return m_menace; }
 
+    //! \brief Demi-ouverture du couloir a la distance D : un objet gene si |phi| <= angleCritiqueRad(D)
+    //! Expose pour que la couche 4 calcule de combien s'ecarter SANS redupliquer les rayons robot.
+    float angleCritiqueRad(float D_cm) const;
+
+    //! \brief true si la pose (x,y) reste dans le terrain avec la marge de bord
+    //! Sert de veto aux manoeuvres de degagement : on ne recule pas dans une bordure.
+    bool poseManoeuvrable(float x_cm, float y_cm) const;
+
     // ---- parametres de reglage
     float m_R0_cm;                  //!< rayon englobant de notre robot
     float m_R1_cm;                  //!< rayon estime du robot adverse

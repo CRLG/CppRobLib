@@ -27,6 +27,13 @@ const char* SM_Evitement::stateToName(unsigned short state)
     case STRATEGIE_CONTOURNEMENT_EVACUE :       return "STRATEGIE_CONTOURNEMENT_EVACUE";
     case STRATEGIE_CONTOURNEMENT_REDRESSE :     return "STRATEGIE_CONTOURNEMENT_REDRESSE";
     case STRATEGIE_CONTOURNEMENT_EVACUE_2 :     return "STRATEGIE_CONTOURNEMENT_EVACUE_2";
+#ifdef SM_DATASINTERFACE_EVITEMENT_AE
+    case STRATEGIE_AE_EVAL :                    return "STRATEGIE_AE_EVAL";
+    case STRATEGIE_AE_ARRET :                   return "STRATEGIE_AE_ARRET";
+    case STRATEGIE_AE_GENTLEMAN :               return "STRATEGIE_AE_GENTLEMAN";
+    case STRATEGIE_AE_ESQUIVE :                 return "STRATEGIE_AE_ESQUIVE";
+    case STRATEGIE_AE_BLOCAGE :                 return "STRATEGIE_AE_BLOCAGE";
+#endif
     }
     return "UNKNOWN_STATE";
 }
@@ -67,6 +74,16 @@ void SM_Evitement::step()
         if (onEntry()) {
         }
 
+#ifdef SM_DATASINTERFACE_EVITEMENT_AE
+        // Strategie AE : le champ de bits de detection (issu des capteurs US ou de leur emulation)
+        // n'est pas representatif de la situation tactique -> on entre directement dans l'echelle
+        // de phases, qui decide sur le verdict de l'evaluation tactique (couche 3).
+        if (internals()->evit_choix_strategie == SM_DatasInterface::STRATEGIE_EVITEMENT_AE) {
+            internals()->evit_strategie_evitement_en_cours = true;
+            gotoState(STRATEGIE_AE_EVAL);
+        }
+        else
+#endif
         // Plus aucun obstacle -> fin de l'évitement sans attendre
         if (internals()->evit_detection_obstacle_bitfield==0) {
             gotoState(SORTIE_EVITEMENT);
@@ -260,6 +277,135 @@ void SM_Evitement::step()
         }
         if (onExit()) { }
         break;
+
+#ifdef SM_DATASINTERFACE_EVITEMENT_AE
+    // ===================================================
+    // STRATEGIE D'EVITEMENT : AE (atelier evitement 2027)
+    // Echelle de phases REENTRANTE : chaque entree dans l'evitement ne joue qu'UNE phase, puis rend
+    // la main a la mission. La marche atteinte est memorisee dans "evit_ae_state" ; si l'adversaire
+    // est toujours la a l'entree suivante, on monte d'une marche. Quand la voie se degage, IA remet
+    // l'echelle a zero. C'est ce qui evite la manoeuvre interminable de la strategie CONTOURNEMENT.
+    //
+    // Les marches PRUDENCE et RALENTI ne sont PAS des etats de cette machine : elles ne sont qu'un
+    // plafond de vitesse applique en continu par IA, sans manoeuvre ni interruption de la mission.
+    // L'echelle de la machine a etats commence donc a l'arret.
+    //
+    // Cette machine est un SEQUENCEUR PUR : toute la geometrie (recul possible, esquive possible et
+    // son cap) est calculee par IA et lue ici sous forme de decisions deja prises. C'est ce qui
+    // permet a ce fichier, partage par tous les robots du club, de ne rien connaitre du lidar.
+    // ===================================================
+    case STRATEGIE_AE_EVAL :
+        if (onEntry()) {
+            internals()->evit_debug_etape = 40;
+        }
+        // La voie s'est degagee entre-temps : on ne manoeuvre pas pour rien
+        if (internals()->evit_menace < MENACE_ARRET) {
+            gotoState(STRATEGIE_EVITEMENT_FIN);
+        }
+        else if (internals()->evit_ae_state < SM_DatasInterface::ETAT_AE_ARRET) {
+            gotoState(STRATEGIE_AE_ARRET);
+        }
+        else if (internals()->evit_ae_state == SM_DatasInterface::ETAT_AE_ARRET) {
+            gotoState(STRATEGIE_AE_GENTLEMAN);
+        }
+        else if (internals()->evit_ae_state == SM_DatasInterface::ETAT_AE_GENTLEMAN) {
+            gotoState(STRATEGIE_AE_ESQUIVE);
+        }
+        else {
+            gotoState(STRATEGIE_AE_BLOCAGE);
+        }
+        if (onExit()) { }
+        break;
+    // ___________________________________
+    // Premiere marche : on s'arrete sur place et on laisse sa chance a l'adversaire de passer.
+    case STRATEGIE_AE_ARRET :
+        if (onEntry()) {
+            internals()->evit_debug_etape = 41;
+            internals()->evit_ae_state = SM_DatasInterface::ETAT_AE_ARRET;
+            // Memorise la pose : elle sert de consigne d'arret ici, et de cap de reference pour les
+            // manoeuvres des marches suivantes
+            internals()->evit_ae_memo_X     = inputs()->X_robot;
+            internals()->evit_ae_memo_Y     = inputs()->Y_robot;
+            internals()->evit_ae_memo_Theta = inputs()->angle_robot;
+            // Arret par consigne de position (plus rapide qu'une consigne manuelle a zero)
+            Application.m_asservissement.CommandeMouvementXY_TETA(internals()->evit_ae_memo_X,
+                                                                  internals()->evit_ae_memo_Y,
+                                                                  internals()->evit_ae_memo_Theta);
+        }
+        gotoStateAfter(STRATEGIE_EVITEMENT_FIN, internals()->evit_ae_tempo_arret_ms);
+        // Sortie anticipee si la voie se degage : place apres le gotoStateAfter pour etre prioritaire
+        if (internals()->evit_menace < MENACE_ARRET) {
+            gotoState(STRATEGIE_EVITEMENT_FIN);
+        }
+        if (onExit()) { }
+        break;
+    // ___________________________________
+    // Deuxieme marche : le "gentleman move". Un petit recul dans l'axe, qui ouvre le passage sans
+    // engager le robot ailleurs, et qui suffit souvent a debloquer un face-a-face.
+    case STRATEGIE_AE_GENTLEMAN :
+        if (onEntry()) {
+            internals()->evit_debug_etape = 42;
+            internals()->evit_ae_state = SM_DatasInterface::ETAT_AE_GENTLEMAN;
+            if (internals()->evit_recul_possible) {
+                // Recule dans le sens oppose a celui ou l'on allait, cap conserve
+                Application.m_asservissement.CommandeMouvementDistanceAngle(
+                            -internals()->evit_sens_avant_detection * DISTANCE_AE_GENTLEMAN_CM,
+                            internals()->evit_ae_memo_Theta);
+            }
+        }
+        // Robot accule a la bordure : la marche est sautee, on passera a l'esquive la prochaine fois
+        if (!internals()->evit_recul_possible) {
+            gotoState(STRATEGIE_EVITEMENT_FIN);
+        }
+        gotoStateIfConvergenceRapide(STRATEGIE_EVITEMENT_FIN, TIMEOUT_AE_MANOEUVRE_MS);
+        if (onExit()) { }
+        break;
+    // ___________________________________
+    // Troisieme marche : l'esquive. On se decale du cote libre, juste assez pour sortir du couloir
+    // de l'adversaire. Le cap d'esquive est calcule par IA a partir de la geometrie de la menace.
+    case STRATEGIE_AE_ESQUIVE :
+        if (onEntry()) {
+            internals()->evit_debug_etape = 43;
+            internals()->evit_ae_state = SM_DatasInterface::ETAT_AE_ESQUIVE;
+            if (internals()->evit_esquive_possible) {
+                Application.m_asservissement.CommandeMouvementDistanceAngle(
+                            internals()->evit_sens_avant_detection * DISTANCE_AE_ESQUIVE_CM,
+                            internals()->evit_esquive_cap_rad);
+            }
+        }
+        // Aucun cote libre ou pas la place : marche sautee, on tombera en blocage a la prochaine entree
+        if (!internals()->evit_esquive_possible) {
+            gotoState(STRATEGIE_EVITEMENT_FIN);
+        }
+        gotoStateIfConvergenceRapide(STRATEGIE_EVITEMENT_FIN, TIMEOUT_AE_MANOEUVRE_MS);
+        if (onExit()) { }
+        break;
+    // ___________________________________
+    // Derniere marche : le blocage. Toutes les manoeuvres ont echoue -> on tient la position plutot
+    // que de s'acharner (c'est la que l'ancienne strategie partait en mouvements erratiques). Au
+    // bout d'un certain temps on redescend l'echelle pour retenter les manoeuvres : l'adversaire a
+    // pu bouger, et rester fige jusqu'a la fin du match ne rapporte rien.
+    case STRATEGIE_AE_BLOCAGE :
+        if (onEntry()) {
+            internals()->evit_debug_etape = 44;
+            internals()->evit_ae_state = SM_DatasInterface::ETAT_AE_BLOCAGE;
+            internals()->evit_ae_chrono_blocage_ms += TEMPO_AE_BLOCAGE_PAS_MS;
+            // Reste sur place, sur la pose memorisee a l'arret
+            Application.m_asservissement.CommandeMouvementXY_TETA(internals()->evit_ae_memo_X,
+                                                                  internals()->evit_ae_memo_Y,
+                                                                  internals()->evit_ae_memo_Theta);
+            if (internals()->evit_ae_chrono_blocage_ms >= TIMEOUT_AE_BLOCAGE_MS) {
+                internals()->evit_ae_chrono_blocage_ms = 0;
+                internals()->evit_ae_state = SM_DatasInterface::ETAT_AE_ARRET;  // on retentera le recul
+            }
+        }
+        gotoStateAfter(STRATEGIE_EVITEMENT_FIN, TEMPO_AE_BLOCAGE_PAS_MS);
+        if (internals()->evit_menace < MENACE_ARRET) {
+            gotoState(STRATEGIE_EVITEMENT_FIN);
+        }
+        if (onExit()) { }
+        break;
+#endif // SM_DATASINTERFACE_EVITEMENT_AE
 
     // ===================================================
     // ===================================================

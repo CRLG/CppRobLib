@@ -33,11 +33,14 @@ public:
         STRATEGIE_CONTOURNEMENT_EVACUE_2,
 
 
-        STATE_5,
-        STATE_6,
-        STATE_7,
-        STATE_8,
-        STATE_9,
+        // Strategie d'evitement : AE (echelle de phases reentrante, atelier evitement 2027)
+        // Ces etats remplacent d'anciens etats libres (STATE_5..STATE_10) jamais utilises.
+        STRATEGIE_AE_EVAL,
+        STRATEGIE_AE_ARRET,
+        STRATEGIE_AE_GENTLEMAN,
+        STRATEGIE_AE_ESQUIVE,
+        STRATEGIE_AE_BLOCAGE,
+
         STATE_10,
         STATE_11,
         STATE_12,
